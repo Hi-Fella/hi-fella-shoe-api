@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  api:
+    image: '${DOCKER_REGISTRY_PATH}:latest'
+    container_name: hi-fella-shoe-api
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - .env
