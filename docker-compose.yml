@@ -15,3 +15,5 @@ services:
       - NODE_ENV=production
     env_file:
       - .env
+    volumes:
+      - ./logs:/app/logs
