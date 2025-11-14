@@ -86,8 +86,6 @@ export class EmailService {
     templateName: string,
     data: any,
   ): Promise<void> {
-    const html = this.compileTemplate(templateName, data);
-
     try {
       await this.emailQueue.add('sendEmail', {
         to,
