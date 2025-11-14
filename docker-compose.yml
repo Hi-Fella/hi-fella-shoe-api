@@ -13,7 +13,19 @@ services:
       - '${PORT:-8000}:8000'
     environment:
       - NODE_ENV=production
+      - REDIS_HOST=redis
     env_file:
       - .env
     volumes:
       - ./logs:/app/logs
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    container_name: hi-fella-shoe-redis
+    restart: unless-stopped
+    ports:
+      - '${REDIS_PORT:-6379}:6379'
+    volumes:
+      - ./redis_data:/data

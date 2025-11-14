@@ -5,10 +5,14 @@ import { ConfigModule } from '@nestjs/config';
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
 import DiscordTransport from 'winston-discord-transport';
+import { EmailModule } from './email/email.module';
+import { QueueModule } from './queue/queue.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    QueueModule,
+    EmailModule,
     WinstonModule.forRoot({
       transports: [
         new winston.transports.Console({
