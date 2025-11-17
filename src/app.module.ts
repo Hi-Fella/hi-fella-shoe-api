@@ -1,4 +1,6 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -15,6 +17,20 @@ import { DailyRotateTransport } from '@/common/transports/winston-daily-rotate.t
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    // TypeOrmModule.forRoot({
+    //   name: 'pg', // alias
+    //   type: 'mysql',
+    //   host: 'localhost',
+    //   port: 3306,
+    //   username: 'root',
+    //   password: 'root',
+    //   database: 'test',
+    //   entities: [],
+    //   synchronize: true,
+    // }),
+    // MongooseModule.forRoot('mongodb://localhost/nest', {
+    //   connectionName: "mongoDB"
+    // }),
     QueueModule,
     EmailModule,
     WinstonModule.forRoot({

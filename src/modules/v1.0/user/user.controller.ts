@@ -50,10 +50,10 @@ export class UserController {
   @UseInterceptors(AnyFilesInterceptor())
   testTgl(@Request() req) {
     const dataTest: string[] = [];
-    dataTest.push(tgl('2025-01-31 15:20', 'iso_time')); // string
-    dataTest.push(tgl(new Date(), 'iso_time')); // date
-    dataTest.push(tgl(dayjs(), 'iso_time')); // dayjs
-    dataTest.push(tgl(Date.now(), 'iso_time')); // number
+    dataTest.push(formatDate('2025-01-31 15:20', 'iso_time')); // string
+    dataTest.push(formatDate(new Date(), 'iso_time')); // date
+    dataTest.push(formatDate(dayjs(), 'iso_time')); // dayjs
+    dataTest.push(formatDate(Date.now(), 'iso_time')); // number
 
     return {
       code: 200,

@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-export function tgl(
+export function formatDate(
   value: string | number | Date | dayjs.Dayjs,
   format: string,
 ): string {
@@ -32,10 +32,10 @@ export function tgl(
 // Attach to globalThis so it’s available globally
 declare global {
   // extend global type
-  var tgl: (
+  var formatDate: (
     value: string | number | Date | dayjs.Dayjs,
     format: string,
   ) => string;
 }
 
-globalThis.tgl = tgl;
+globalThis.formatDate = formatDate;
