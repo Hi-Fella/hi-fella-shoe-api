@@ -1,22 +1,41 @@
-export function randomString(length: number = 8): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-}
+import dayjs from 'dayjs';
 
-export function add(a: number, b: number): number {
-  return a + b;
+export function tgl(
+  value: string | number | Date | dayjs.Dayjs,
+  format: string,
+): string {
+  // placed if used later
+  const timezone = 'Asia/Jakarta';
+
+  if (format == 'iso_time') {
+    // Dayjs instance
+    if (dayjs.isDayjs(value)) {
+      return value.toISOString();
+    }
+
+    // Native Date / Number timestamp / String date
+    if (
+      value instanceof Date ||
+      typeof value === 'number' ||
+      typeof value === 'string'
+    ) {
+      const d = dayjs(value);
+      return d.isValid() ? d.toISOString() : '';
+    }
+
+    return '';
+  }
+
+  return '';
 }
 
 // Attach to globalThis so it’s available globally
 declare global {
   // extend global type
-  var randomString: (length?: number) => string;
-  var add: (a: number, b: number) => number;
+  var tgl: (
+    value: string | number | Date | dayjs.Dayjs,
+    format: string,
+  ) => string;
 }
 
-globalThis.randomString = randomString;
-globalThis.add = add;
+globalThis.tgl = tgl;

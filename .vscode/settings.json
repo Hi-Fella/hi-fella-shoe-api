@@ -1,5 +1,7 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "prettier.configPath": ".prettierrc"
+  "prettier.configPath": ".prettierrc",
+  "prettier.tabWidth": 2,
+  "editor.formatOnSave": true
 }

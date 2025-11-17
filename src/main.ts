@@ -7,14 +7,19 @@ import { DdExceptionFilter } from '@/common/filters/dd-exception.filter';
 import { ConfigService } from '@nestjs/config';
 import '@/global/dd.util';
 import '@/global/helpers.util';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = app.get(ConfigService);
 
+  // use winston as global logger
+  const logger = app.get(WINSTON_MODULE_NEST_PROVIDER);
+  app.useLogger(logger);
+
   // Global prefix for API
   app.setGlobalPrefix('api');
-  
+
   // ✅ Enable versioning
   app.enableVersioning({
     type: VersioningType.URI, // or HEADER, MEDIA_TYPE, CUSTOM

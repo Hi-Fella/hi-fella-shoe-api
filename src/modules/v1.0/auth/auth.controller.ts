@@ -1,6 +1,14 @@
-import { Controller, Post, Body, UseInterceptors, BadRequestException, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseInterceptors,
+  BadRequestException,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterUserDto, LoginUserDto } from '../user/user.dto'
+import { RegisterUserDto, LoginUserDto } from '../user/user.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 
 @Controller({
@@ -14,7 +22,6 @@ export class AuthController {
   @UseInterceptors(AnyFilesInterceptor()) // intercepts multipart and allows form fields
   // @UsePipes(new DtoValidationPipe())
   async register(@Body() dto: RegisterUserDto) {
-    dd(randomString(12))
     return this.authService.register(dto);
   }
 
