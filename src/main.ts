@@ -35,7 +35,11 @@ async function bootstrap() {
     new DdExceptionFilter(),
   );
 
-  // Port
-  await app.listen(process.env.PORT ?? 3000);
+  // Start the server (HTTP + WebSocket via NestJS Gateway)
+  const port = process.env.PORT ?? 3000;
+  await app.listen(port);
+
+  logger.log(`Application is running on port ${port}`);
+  logger.log(`WebSocket server is integrated and available on the same port`);
 }
 bootstrap();

@@ -9,6 +9,7 @@ import * as winston from 'winston';
 import DiscordTransport from 'winston-discord-transport';
 import { EmailModule } from './email/email.module';
 import { QueueModule } from './queue/queue.module';
+import { WebsocketModule } from './websocket/websocket.module';
 import { AuthModule } from '@/modules/v1.0/auth/auth.module';
 import { UserModule } from '@/modules/v1.0/user/user.module';
 import { LoggerMiddleware } from '@/common/middlewares/logger.middleware';
@@ -33,6 +34,7 @@ import { DailyRotateTransport } from '@/common/transports/winston-daily-rotate.t
     // }),
     QueueModule,
     EmailModule,
+    WebsocketModule,
     WinstonModule.forRoot({
       transports: [
         new winston.transports.Console({
