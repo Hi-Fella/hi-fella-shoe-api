@@ -1,9 +1,16 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsEmail, IsOptional, IsString, IsInt, MinLength } from 'class-validator';
-import { Match } from '@/common/dtos/match.dto'
+import {
+  IsNotEmpty,
+  IsEmail,
+  IsOptional,
+  IsString,
+  IsInt,
+  MinLength,
+} from 'class-validator';
+import { Match } from '@/common/dtos/match.dto';
 
 export class RegisterUserDto {
-  @IsEmail({}, {message:'Invalid email format'})
+  @IsEmail({}, { message: 'Invalid email format' })
   @IsNotEmpty()
   email: string;
 
@@ -14,21 +21,21 @@ export class RegisterUserDto {
 
   @Match('password', { message: 'The passwords did not match' })
   @IsNotEmpty()
-  password_confirmation:string
+  password_confirmation: string;
 
   @MinLength(3)
   @IsString()
   @IsNotEmpty()
-  name:string
+  name: string;
 
   @IsInt()
   @Type(() => Number)
   @IsOptional()
-  age:number
+  age: number;
 }
 
 export class LoginUserDto {
-  @IsEmail({}, {message:'Invalid email format'})
+  @IsEmail({}, { message: 'Invalid email format' })
   @IsNotEmpty()
   email: string;
 

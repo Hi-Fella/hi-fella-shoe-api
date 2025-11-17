@@ -16,32 +16,37 @@ export class InternalExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse();
 
     // If it's already a known HTTP exception, allow default behavior
-    if (exception instanceof InternalServerErrorException === false &&
-        exception instanceof HttpException === false &&
-        exception.status) {
-      return response
-        .status(exception.status)
-        .json(exception.getResponse());
+    if (
+      exception instanceof InternalServerErrorException === false &&
+      exception instanceof HttpException === false &&
+      exception.status
+    ) {
+      return response.status(exception.status).json(exception.getResponse());
     }
 
     var error_message = {
-        code: 500,
-        status: "failed",
-        message: 'Internal server error',
-        data: null
+      code: 500,
+      status: 'failed',
+      message: 'Internal server error',
+      data: null,
     };
-    if (exception instanceof InternalServerErrorException || !exception.status){
-        if (this.config.get<string>('APP_ENV') == 'local'){
-            error_message = Object.assign(error_message, {msg: exception?.message ?? 'Unhandled exception'});
-        }
+    if (
+      exception instanceof InternalServerErrorException ||
+      !exception.status
+    ) {
+      if (this.config.get<string>('APP_ENV') == 'local') {
+        error_message = Object.assign(error_message, {
+          msg: exception?.message ?? 'Unhandled exception',
+        });
+      }
     } else {
-        // HTTP Exception
-        error_message = {
-            code: exception.status,
-            status: "failed",
-            message: exception.message ?? 'Unhandled exception',
-            data: null
-        };
+      // HTTP Exception
+      error_message = {
+        code: exception.status,
+        status: 'failed',
+        message: exception.message ?? 'Unhandled exception',
+        data: null,
+      };
     }
 
     // CUSTOM 500 RESPONSE

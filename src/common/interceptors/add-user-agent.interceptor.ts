@@ -18,7 +18,7 @@ export class AddUserAgentInterceptor implements NestInterceptor {
         code: 401,
         status: 'failed',
         message: 'Missing X-API-KEY header',
-        data: null
+        data: null,
       });
     }
 

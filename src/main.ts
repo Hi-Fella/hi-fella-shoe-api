@@ -23,13 +23,11 @@ async function bootstrap() {
   // ✅ Enable versioning
   app.enableVersioning({
     type: VersioningType.URI, // or HEADER, MEDIA_TYPE, CUSTOM
-    defaultVersion: '1.0',    // optional, fallback version
+    defaultVersion: '1.0', // optional, fallback version
   });
 
   // Global Pipes
-  app.useGlobalPipes(
-    new DtoValidationPipe(),
-  );
+  app.useGlobalPipes(new DtoValidationPipe());
 
   // Global Filters
   app.useGlobalFilters(
