@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -8,6 +8,10 @@ import DiscordTransport from 'winston-discord-transport';
 import { EmailModule } from './email/email.module';
 import { QueueModule } from './queue/queue.module';
 import { WebsocketModule } from './websocket/websocket.module';
+import { AuthModule } from '@/modules/v1.0/auth/auth.module';
+import { UserModule } from '@/modules/v1.0/user/user.module';
+import { LoggerMiddleware } from '@/common/middlewares/logger.middleware';
+import { DailyRotateTransport } from '@/common/transports/winston-daily-rotate.transport';
 
 @Module({
   imports: [
@@ -41,6 +45,11 @@ import { WebsocketModule } from './websocket/websocket.module';
             winston.format.json(),
           ),
         }),
+        new DailyRotateTransport({
+          dirname: 'logs',
+          filename: 'log-%DATE%.log',
+          datePattern: 'YYYY-MM-DD',
+        }),
         ...(!!process.env.DISCORD_LOG_WEBHOOK
           ? [
               new DiscordTransport({
@@ -52,8 +61,18 @@ import { WebsocketModule } from './websocket/websocket.module';
           : []),
       ],
     }),
+    AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      // * at the end is now deprecated, see warn below for more info
+      // {"context":"LegacyRouteConverter","level":"warn","message":"Unsupported route path: \"/api/*\". In previous versions, the symbols ?, *, and + were used to denote optional or repeating path parameters. The latest version of \"path-to-regexp\" now requires the use of named parameters. For example, instead of using a route like /users/* to capture all routes starting with \"/users\", you should use /users/*path. For more details, refer to the migration guide. Attempting to auto-convert..."}
+      .forRoutes('/*api'); // apply to all api routes
+  }
+}
