@@ -7,12 +7,14 @@ import * as winston from 'winston';
 import DiscordTransport from 'winston-discord-transport';
 import { EmailModule } from './email/email.module';
 import { QueueModule } from './queue/queue.module';
+import { WebsocketModule } from './websocket/websocket.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     QueueModule,
     EmailModule,
+    WebsocketModule,
     WinstonModule.forRoot({
       transports: [
         new winston.transports.Console({
