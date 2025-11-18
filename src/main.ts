@@ -8,10 +8,15 @@ import { ConfigService } from '@nestjs/config';
 import '@/global/dd.util';
 import '@/global/helpers.util';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const config = app.get(ConfigService);
+
+  // Serve static files from the 'public' directory
+  app.useStaticAssets(join(__dirname, '..', 'public'));
 
   // use winston as global logger
   const logger = app.get(WINSTON_MODULE_NEST_PROVIDER);

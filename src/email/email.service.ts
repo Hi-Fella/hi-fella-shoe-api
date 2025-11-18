@@ -1,13 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import * as nodemailer from 'nodemailer';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as handlebars from 'handlebars';
+import { registerHelpers } from './handlebars-helpers';
+import { ResetPasswordEmailParams } from './email.types';
 
 @Injectable()
-export class EmailService {
+export class EmailService implements OnModuleInit {
   private transporter: nodemailer.Transporter;
 
   constructor(@InjectQueue('email') private emailQueue: Queue) {
@@ -22,6 +24,11 @@ export class EmailService {
     });
   }
 
+  onModuleInit() {
+    // Register Handlebars helpers when the module initializes
+    registerHelpers();
+  }
+
   private compileTemplate(templateName: string, data: any): string {
     const templatePath = path.join(
       __dirname,
@@ -33,19 +40,13 @@ export class EmailService {
     return template(data);
   }
 
-  async sendTestEmail(): Promise<void> {
-    const data = {
-      name: 'Test User',
-      message: 'This is a test email from our Hi-Fella Shoe!',
-      date: new Date().toLocaleDateString(),
-    };
-
+  async sendResetPasswordEmail(data: ResetPasswordEmailParams): Promise<void> {
     try {
       await this.emailQueue.add('sendEmail', {
-        to: 'test@hi-fella.com',
-        subject: 'Test Email from Hi-Fella Shoe',
-        templateName: 'test',
-        data,
+        to: data.to,
+        subject: 'Reset Your Password',
+        templateName: 'reset_password',
+        data: data.data,
       });
       console.log('Test email job added to queue');
     } catch (error) {

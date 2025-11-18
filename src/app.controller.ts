@@ -19,7 +19,12 @@ export class AppController {
   @Post('test-email')
   async testEmail(): Promise<string> {
     try {
-      await this.emailService.sendTestEmail();
+      await this.emailService.sendResetPasswordEmail({
+        to: 'rizqi@hi-fella.com',
+        data: {
+          link: 'https://hi-fella.com',
+        },
+      });
       return 'Test email sent successfully!';
     } catch (error) {
       return `Failed to send test email: ${error.message}`;
