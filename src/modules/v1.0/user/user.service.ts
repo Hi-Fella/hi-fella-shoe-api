@@ -1,91 +1,91 @@
 import { Injectable } from '@nestjs/common';
-import * as crypto from 'crypto';
-import * as bcrypt from 'bcrypt';
-import dayjs from 'dayjs';
-import { RegisterUserDto, LoginUserDto } from './user.dto';
 import { ConfigService } from '@nestjs/config';
-
-// This should be a real class/interface representing a user entity
-export type User = any;
+import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
+import { Repository } from 'typeorm';
+import { CreateUserDto, UserData } from './user.dto';
+import { User } from '@/entities/user.entity';
+import { HttpResponseUtil } from '@/common/utils/httpresponse.util';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly config: ConfigService) {}
-  private users: any[] = []; // mock database
+  constructor(
+    private readonly config: ConfigService,
+    @InjectRepository(User, 'pg')
+    private readonly userRepository: Repository<User>,
+  ) {}
 
-  async createUser(dto: RegisterUserDto) {
-    const exists = this.users.find((u) => u.email === dto.email);
-    if (exists) throw new Error('Email already registered');
+  async createUser(dto: CreateUserDto): Promise<User> {
+    // Check if user already exists
+    const existingUser = await this.userRepository.findOne({
+      where: { email: dto.email },
+    });
 
-    // const rounds = Number(this.config.get('BCRYPT_SALT_ROUNDS', 10));
-    const rounds = 'abd';
-    // console.log(rounds, typeof rounds);
-    const hashedPassword = await bcrypt.hash(dto.password, rounds);
-    // $token_bearer = date("dmYHis") . substr($user->uuid, 0, 5) . Str::random(8);
-    // uuid is unused, so empty string
-    const random = crypto.randomBytes(4).toString('hex');
-    const token_bearer =
-      dayjs().format('DDMMYYYYHHmmss') + '' + random.toString();
+    if (existingUser) {
+      throw HttpResponseUtil.badRequest({
+        message: 'Input tidak valid',
+        field_errors: {
+          email: 'E-mail sudah terdaftar.',
+        },
+      });
+    }
 
-    const user = {
-      id_user: this.users.length + 1,
+    // Hash password
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(dto.password, saltRounds);
+
+    // Generate token bearer
+    const tokenBearer = crypto.randomBytes(32).toString('hex');
+
+    // Generate token socket
+    const dateStr = formatDate(new Date(), 'DDMMYYYY');
+    const tokenSocketRaw = `user-${dateStr}${crypto.randomBytes(32).toString('hex')}`;
+    const tokenSocket =
+      crypto.createHash('md5').update(tokenSocketRaw).digest('hex') +
+      crypto.randomBytes(3).toString('hex');
+
+    // Create new user
+    const newUser = this.userRepository.create({
       email: dto.email,
       password: hashedPassword,
-      token_bearer: token_bearer,
-      name: dto.name,
-      age: dto.age,
-    };
-    this.users.push(user);
+      utm_id: dto.utm_id,
+      utm_source: dto.utm_source,
+      utm_medium: dto.utm_medium,
+      utm_campaign: dto.utm_campaign,
+      utm_term: dto.utm_term,
+      utm_content: dto.utm_content,
+      token_bearer: tokenBearer,
+      token_socket: tokenSocket,
+      registration_step: 1,
+      registration_type: 'manual',
+      account_status: true, // Set default account status
+    });
 
-    return {
-      code: 201,
-      status: 'success',
-      message: 'User registered',
-      data: {
-        id_user: user.id_user,
-        email: user.email,
-        token_bearer: token_bearer,
-      },
-    };
+    // Save user to database
+    const savedUser = await this.userRepository.save(newUser);
+
+    return savedUser;
   }
 
-  async validateUser(dto: LoginUserDto) {
-    const user = this.users.find((u) => u.email === dto.email);
-    if (!user)
-      return {
-        code: 404,
-        status: 'failed',
-        message: 'User not found',
-        data: null,
-      };
-
-    const match = await bcrypt.compare(dto.password, user.password);
-    if (match) {
-      return {
-        code: 200,
-        status: 'success',
-        message: 'Logged in',
-        data: {
-          id: user.id,
-          email: user.email,
-          token_bearer: user.token_bearer,
-        },
-      };
-    } else {
-      return {
-        code: 404,
-        status: 'failed',
-        message: 'User not found',
-        data: null,
-      };
-    }
+  async findUserWithRelations(email: string) {
+    return this.userRepository.findOne({
+      where: { email },
+      relations: ['city', 'city.province', 'city.province.country'],
+    });
   }
 
   async findByToken(token_bearer: string) {
-    return this.users.find((u) => u.token_bearer === token_bearer);
+    return this.userRepository.findOne({
+      where: { token_bearer },
+      relations: ['city', 'city.province', 'city.province.country'],
+    });
   }
 
-  async viewUser(id_user: BigInteger) {
-    return this.users.find((u) => u.id_user === id_user);
+  async viewUser(id_user: string) {
+    return this.userRepository.findOne({
+      where: { id_user: id_user },
+      relations: ['city', 'city.province', 'city.province.country'],
+    });
   }
 }

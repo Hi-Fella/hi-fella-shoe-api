@@ -9,7 +9,7 @@ import { TokenAuthGuard } from '@/common/guards/token-auth.guard';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { AddUserAgentInterceptor } from '@/common/interceptors/add-user-agent.interceptor';
 import dayjs from 'dayjs';
-import { HttpResponseUtil } from '@/common/utils/httpresponse.utils';
+import { HttpResponseUtil } from '@/common/utils/httpresponse.util';
 
 @Controller({
   path: 'user',

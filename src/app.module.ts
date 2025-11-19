@@ -1,34 +1,33 @@
-import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { MongooseModule } from '@nestjs/mongoose';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { LoggerMiddleware } from '@/common/middlewares/logger.middleware';
+import { DailyRotateTransport } from '@/common/transports/winston-daily-rotate.transport';
+import { AuthModule } from '@/modules/v1.0/auth/auth.module';
+import { UserModule } from '@/modules/v1.0/user/user.module';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
 import DiscordTransport from 'winston-discord-transport';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 import { EmailModule } from './email/email.module';
 import { QueueModule } from './queue/queue.module';
 import { WebsocketModule } from './websocket/websocket.module';
-import { AuthModule } from '@/modules/v1.0/auth/auth.module';
-import { UserModule } from '@/modules/v1.0/user/user.module';
-import { LoggerMiddleware } from '@/common/middlewares/logger.middleware';
-import { DailyRotateTransport } from '@/common/transports/winston-daily-rotate.transport';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    // TypeOrmModule.forRoot({
-    //   name: 'pg', // alias
-    //   type: 'mysql',
-    //   host: 'localhost',
-    //   port: 3306,
-    //   username: 'root',
-    //   password: 'root',
-    //   database: 'test',
-    //   entities: [],
-    //   synchronize: true,
-    // }),
+    TypeOrmModule.forRoot({
+      name: 'pg', // alias
+      type: 'postgres',
+      host: process.env.DB_HOST,
+      port: !!process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
+      username: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: true,
+    }),
     // MongooseModule.forRoot('mongodb://localhost/nest', {
     //   connectionName: "mongoDB"
     // }),
