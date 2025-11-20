@@ -4,8 +4,12 @@ import {
   LoginUserDto,
   RegisterUserDto,
   RegisterUserResponseData,
+  CompleteProfileDto,
+  CompleteProfileResponseData,
 } from './auth.dto';
 import * as bcrypt from 'bcrypt';
+import { User } from '@/entities/user.entity';
+import { HttpResponseUtil } from '@/common/utils/httpresponse.util';
 
 @Injectable()
 export class AuthService {
@@ -52,7 +56,7 @@ export class AuthService {
   }
 
   async login(dto: LoginUserDto) {
-    const user = await this.userService.findUserWithRelations(dto.email);
+    const user = await this.userService.findByEmail(dto.email);
 
     if (!user)
       return {
@@ -111,5 +115,71 @@ export class AuthService {
 
     // For JWT:
     // return this.jwtService.verifyAsync(token);
+  }
+
+  async completeProfile(
+    user: User,
+    dto: CompleteProfileDto,
+  ): Promise<CompleteProfileResponseData> {
+    // validate registration step
+    if (user.registration_step !== 1) {
+      throw HttpResponseUtil.badRequest({
+        message: 'Registration had been completed previously',
+      });
+    }
+
+    // Update user profile with the provided data
+    await this.userService.updateUser(user.id_user, {
+      name: dto.fullname,
+      gender: dto.gender,
+      birthdate: dto.birth_date,
+      city_id: dto.city_id,
+      phone_code: dto.phone_code,
+      phone: dto.phone_number,
+      registration_step: null,
+      finish_registration_at: new Date().toISOString(),
+    });
+
+    // Get the updated user
+    const userWithRelations = await this.userService.findOneById(user.id_user);
+    if (!userWithRelations) {
+      throw HttpResponseUtil.notFound({ message: 'User not found' });
+    }
+
+    // Format user data for response
+    const userData: CompleteProfileResponseData['user'] = {
+      id: userWithRelations.id_user,
+      email: userWithRelations.email,
+      name: userWithRelations.name,
+      phone_code: userWithRelations.phone_code,
+      phone: userWithRelations.phone,
+      gender: userWithRelations.gender,
+      birth_date: userWithRelations.birthdate
+        ? formatDate(userWithRelations.birthdate, 'DD MMM YYYY')
+        : null,
+      country: userWithRelations?.city?.province?.country
+        ? {
+            id: userWithRelations.city.province.country.id_country.toString(),
+            name: userWithRelations.city.province.country.name_country,
+          }
+        : null,
+      city:
+        userWithRelations?.city && userWithRelations.city.province?.country
+          ? {
+              id: userWithRelations.city.id_city.toString(),
+              country: userWithRelations.city.province.country.name_country,
+            }
+          : null,
+      token_bearer: userWithRelations.token_bearer,
+      token_socket: userWithRelations.token_socket,
+    };
+
+    return {
+      registration_type: userWithRelations.registration_type,
+      registration_complete: true,
+      token_bearer: userWithRelations.token_bearer,
+      token_socket: userWithRelations.token_socket,
+      user: userData,
+    };
   }
 }
