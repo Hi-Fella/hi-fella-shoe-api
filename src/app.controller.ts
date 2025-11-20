@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { AppService } from './app.service';
-import { HttpResponseUtil } from './common/utils/httpresponse.utils';
+import { HttpResponseUtil } from './common/utils/httpresponse.util';
 import { EmailService } from './email/email.service';
 import { WebsocketService } from './websocket/websocket.service';
 
