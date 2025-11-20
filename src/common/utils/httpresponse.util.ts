@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ForbiddenException,
+  HttpStatus,
   InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
@@ -24,7 +25,7 @@ export class HttpResponseUtil {
   static success<T>(params: HttpResponseSuccessParams<T> = {}) {
     return {
       status: 'success',
-      code: 200,
+      code: HttpStatus.OK,
       message: params?.message ?? 'success',
       data: params?.data ?? null,
     };
@@ -33,7 +34,7 @@ export class HttpResponseUtil {
   static successCreated<T>(params: HttpResponseSuccessParams<T> = {}) {
     return {
       status: 'success',
-      code: 201,
+      code: HttpStatus.CREATED,
       message: params?.message ?? 'ok',
       data: params?.data ?? null,
     };
@@ -42,7 +43,7 @@ export class HttpResponseUtil {
   static badRequest<T>(params: HttpResponseFailedParams<T> = {}) {
     return new BadRequestException({
       status: 'failed',
-      code: 400,
+      code: HttpStatus.BAD_REQUEST,
       message: params?.message ?? 'bad request',
       data: params?.data ?? null,
       field_errors: params?.field_errors ?? null,
@@ -52,7 +53,7 @@ export class HttpResponseUtil {
   static unauthorized<T>(params: HttpResponseFailedParams<T> = {}) {
     return new UnauthorizedException({
       status: 'failed',
-      code: 401,
+      code: HttpStatus.UNAUTHORIZED,
       message: params?.message ?? 'unauthorized',
       data: params?.data ?? null,
     });
@@ -61,7 +62,7 @@ export class HttpResponseUtil {
   static forbidden<T>(params: HttpResponseFailedParams<T> = {}) {
     return new ForbiddenException({
       status: 'failed',
-      code: 403,
+      code: HttpStatus.FORBIDDEN,
       message: params?.message ?? 'forbidden',
       data: params?.data ?? null,
     });
@@ -70,7 +71,7 @@ export class HttpResponseUtil {
   static notFound<T>(params: HttpResponseFailedParams<T> = {}) {
     return new NotFoundException({
       status: 'failed',
-      code: 404,
+      code: HttpStatus.NOT_FOUND,
       message: params?.message ?? 'not found',
       data: params?.data ?? null,
     });
@@ -79,7 +80,7 @@ export class HttpResponseUtil {
   static serverError<T>(params: HttpResponseFailedParams<T> = {}) {
     return new InternalServerErrorException({
       status: 'failed',
-      code: 500,
+      code: HttpStatus.INTERNAL_SERVER_ERROR,
       message: params?.message ?? 'something went wrong',
       data: params?.data ?? null,
     });
