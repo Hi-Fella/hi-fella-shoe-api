@@ -6,6 +6,8 @@ import {
   UseInterceptors,
   UseGuards,
   Request,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { AuthService } from './auth.service';
@@ -30,9 +32,13 @@ export class AuthController {
   }
 
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   @UseInterceptors(AnyFilesInterceptor()) // intercepts multipart and allows form fields
   async login(@Body() dto: LoginUserDto) {
-    return this.authService.login(dto);
+    const loginData = await this.authService.login(dto);
+    return HttpResponseUtil.success({
+      data: loginData,
+    });
   }
 
   @Post('complete-profile')

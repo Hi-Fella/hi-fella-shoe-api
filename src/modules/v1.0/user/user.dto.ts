@@ -196,6 +196,4 @@ export interface UserData {
     id: string;
     country: string;
   } | null;
-  token_bearer: string | null;
-  token_socket: string | null;
 }

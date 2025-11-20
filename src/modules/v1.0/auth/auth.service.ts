@@ -6,6 +6,7 @@ import {
   RegisterUserResponseData,
   CompleteProfileDto,
   CompleteProfileResponseData,
+  LoginUserResponseData,
 } from './auth.dto';
 import * as bcrypt from 'bcrypt';
 import { User } from '@/entities/user.entity';
@@ -42,8 +43,6 @@ export class AuthService {
               country: userWithRelations.city.province.country.name_country,
             }
           : null,
-      token_bearer: userWithRelations.token_bearer,
-      token_socket: userWithRelations.token_socket,
     };
 
     return {
@@ -55,57 +54,46 @@ export class AuthService {
     };
   }
 
-  async login(dto: LoginUserDto) {
+  async login(dto: LoginUserDto): Promise<LoginUserResponseData> {
     const user = await this.userService.findByEmail(dto.email);
 
-    if (!user)
-      return {
-        code: 404,
-        status: 'failed',
-        message: 'User not found',
-        data: null,
-      };
+    if (!user) {
+      throw HttpResponseUtil.unauthorized({ message: 'Invalid credentials' });
+    }
 
     const match = await bcrypt.compare(dto.password, user.password);
-    if (match) {
-      return {
-        code: 200,
-        status: 'success',
-        message: 'Logged in',
-        data: {
-          id: user.id_user,
-          email: user.email,
-          name: user.name,
-          phone_code: user.phone_code,
-          phone: user.phone,
-          gender: user.gender,
-          birth_date: user.birthdate
-            ? user.birthdate.toISOString().split('T')[0]
-            : null,
-          country: user.city?.province?.country
+    if (!match) {
+      throw HttpResponseUtil.unauthorized({ message: 'Invalid credentials' });
+    }
+
+    return {
+      token_bearer: user.token_bearer,
+      token_socket: user.token_socket,
+      user: {
+        id: user.id_user,
+        email: user.email,
+        name: user.name,
+        phone_code: user.phone_code,
+        phone: user.phone,
+        gender: user.gender,
+        birth_date: user.birthdate
+          ? user.birthdate.toISOString().split('T')[0]
+          : null,
+        country: user.city?.province?.country
+          ? {
+              id: user.city.province.country.id_country.toString(),
+              name: user.city.province.country.name_country,
+            }
+          : null,
+        city:
+          user.city && user.city.province?.country
             ? {
-                id: user.city.province.country.id_country.toString(),
-                name: user.city.province.country.name_country,
+                id: user.city.id_city.toString(),
+                country: user.city.province.country.name_country,
               }
             : null,
-          city:
-            user.city && user.city.province?.country
-              ? {
-                  id: user.city.id_city.toString(),
-                  country: user.city.province.country.name_country,
-                }
-              : null,
-          token_bearer: user.token_bearer,
-        },
-      };
-    } else {
-      return {
-        code: 404,
-        status: 'failed',
-        message: 'User not found',
-        data: null,
-      };
-    }
+      },
+    };
   }
 
   async validateToken(token_bearer: string) {
@@ -170,8 +158,6 @@ export class AuthService {
               country: userWithRelations.city.province.country.name_country,
             }
           : null,
-      token_bearer: userWithRelations.token_bearer,
-      token_socket: userWithRelations.token_socket,
     };
 
     return {

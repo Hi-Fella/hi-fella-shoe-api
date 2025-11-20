@@ -1,5 +1,4 @@
 import { IsAgeValid } from '@/common/decorators/validator/is-age-valid.decorator';
-import { IsPasswordValid } from '@/common/decorators/validator/is-password-valid.decorator';
 import { IsPhoneNumberValid } from '@/common/decorators/validator/is-phone-number-valid.decorator';
 import { CreateUserDto, UserData } from '@/modules/v1.0/user/user.dto';
 import {
@@ -23,14 +22,19 @@ export interface RegisterUserResponseData {
 }
 
 export class LoginUserDto {
-  @IsEmail({}, { message: 'Invalid email format' })
-  @IsNotEmpty()
+  @IsEmail({}, { message: 'Silakan masukkan alamat email yang valid' })
+  @IsNotEmpty({ message: 'Silakan masukkan email anda' })
   email: string;
 
-  @IsPasswordValid()
   @IsString({ message: 'Password must be a string' })
   @IsNotEmpty()
   password: string;
+}
+
+export interface LoginUserResponseData {
+  token_bearer: string | null;
+  token_socket: string | null;
+  user: UserData;
 }
 
 export class CompleteProfileDto {
