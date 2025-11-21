@@ -39,6 +39,7 @@ export function IsPhoneNumberValid(phoneCodeProperty: string) {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,
+      name: 'isPhoneNumberValid',
       options: {},
       constraints: [phoneCodeProperty],
       validator: IsPhoneNumberValidConstraint,
