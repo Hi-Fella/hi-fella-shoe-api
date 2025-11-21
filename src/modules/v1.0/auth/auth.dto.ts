@@ -22,19 +22,19 @@ export interface RegisterUserResponseData {
 }
 
 export class LoginUserDto {
-  @IsEmail({}, { message: 'Silakan masukkan alamat email yang valid' })
-  @IsNotEmpty({ message: 'Silakan masukkan email anda' })
+  @IsEmail()
+  @IsNotEmpty()
   email: string;
 
-  @IsString({ message: 'Password must be a string' })
+  @IsString()
   @IsNotEmpty()
   password: string;
 
-  @IsString({ message: 'Browser must be a string' })
+  @IsString()
   @IsNotEmpty()
   browser: string;
 
-  @IsString({ message: 'Browser must be a string' })
+  @IsString()
   @IsNotEmpty()
   device_info: string;
 }
@@ -52,30 +52,24 @@ export class CompleteProfileDto {
   @IsAlpha()
   fullname: string;
 
-  @IsString({ message: 'Gender must be a string' })
+  @IsString()
   @IsNotEmpty()
-  @IsIn(['male', 'female', 'prefer_not'], {
-    message: 'Gender must be male, female, or prefer not',
-  })
+  @IsIn(['male', 'female', 'prefer_not'])
   gender: 'male' | 'female' | 'prefer_not';
 
-  @Matches(/^\d{4}-\d{2}-\d{2}$/, {
-    message: 'Birth date must be in YYYY-MM-DD format',
-  })
+  @Matches(/^\d{4}-\d{2}-\d{2}$/)
   @IsAgeValid()
   @IsNotEmpty()
   birth_date: string;
 
   @IsString()
   @IsNotEmpty()
-  @Matches(/^\d+$/, { message: 'Invalid City' })
+  @Matches(/^\d+$/)
   city_id: string;
 
   @IsString()
   @IsNotEmpty()
-  @Matches(/^\+\d+$/, {
-    message: 'Phone code must start with + followed by numbers (e.g., +62)',
-  })
+  @Matches(/^\+\d+$/)
   phone_code: string;
 
   @IsPhoneNumberValid('phone_code')

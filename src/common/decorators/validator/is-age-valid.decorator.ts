@@ -42,6 +42,7 @@ export function IsAgeValid() {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,
+      name: 'isAgeValid',
       options: {},
       constraints: [],
       validator: IsAgeValidConstraint,

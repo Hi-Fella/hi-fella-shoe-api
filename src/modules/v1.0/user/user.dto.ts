@@ -10,6 +10,7 @@ import {
   IsString,
   Matches,
   MaxLength,
+  MinLength,
 } from 'class-validator';
 import { IsPasswordValid } from '@/common/decorators/validator/is-password-valid.decorator';
 
@@ -18,6 +19,7 @@ export class CreateUserDto {
   email: string;
 
   @IsPasswordValid()
+  @MinLength(8)
   @IsString()
   @IsNotEmpty()
   password: string;
@@ -72,34 +74,28 @@ export class UpdateUserDto {
   @IsString()
   @IsOptional()
   @MaxLength(20)
-  @Matches(/^\d+$/, { message: 'Phone number must contain numbers only' })
+  @Matches(/^\d+$/)
   phone?: string;
 
   @IsString()
   @IsOptional()
   @MaxLength(10)
-  @Matches(/^\+\d+$/, {
-    message: 'Phone code must start with + followed by numbers (e.g., +62)',
-  })
+  @Matches(/^\+\d+$/)
   phone_code?: string;
 
   @IsString()
   @IsOptional()
   @MaxLength(10)
-  @IsIn(['male', 'female', 'prefer_not'], {
-    message: 'Gender must be male, female, or prefer not',
-  })
+  @IsIn(['male', 'female', 'prefer_not'])
   gender?: 'male' | 'female' | 'prefer_not';
 
-  @Matches(/^\d{4}-\d{2}-\d{2}$/, {
-    message: 'Birth date must be in YYYY-MM-DD format',
-  })
+  @Matches(/^\d{4}-\d{2}-\d{2}$/)
   @IsOptional()
   birthdate?: string;
 
   @IsString()
   @IsOptional()
-  @Matches(/^\d+$/, { message: 'Invalid City' })
+  @Matches(/^\d+$/)
   city_id?: string;
 
   @IsString()

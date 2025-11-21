@@ -1,13 +1,96 @@
 {
   "auth": {
+    "RegisterUserDto": {
+      "email": {
+        "isEmail": "Silakan masukkan alamat email yang valid",
+        "isNotEmpty": "Silakan masukkan email Anda",
+        "isAlreadyRegistered": "Email ini sudah terdaftar"
+      },
+      "password": {
+        "isPasswordValid": "Kata sandi harus mencakup huruf kapital, angka, dan karakter khusus",
+        "isString": "Silakan masukkan kata sandi yang valid",
+        "isNotEmpty": "Kata sandi harus diisi",
+        "minLength": "Kata sandi harus diisi"
+      },
+      "password_confirmation": {
+        "match": "Kata sandi tidak cocok",
+        "isNotEmpty": "Silakan konfirmasi kata sandi anda"
+      },
+      "browser": {
+        "isString": "Silakan masukkan browser yang valid",
+        "isNotEmpty": "Silakan masukkan browser"
+      },
+      "device_info": {
+        "isString": "Silakan masukkan informasi perangkat yang valid",
+        "isNotEmpty": "Silakan masukkan informasi perangkat"
+      },
+      "utm_id": {
+        "isString": "Silakan masukkan UTM ID yang valid"
+      },
+      "utm_source": {
+        "isString": "Silakan masukkan UTM source yang valid"
+      },
+      "utm_medium": {
+        "isString": "Silakan masukkan UTM medium yang valid"
+      },
+      "utm_campaign": {
+        "isString": "Silakan masukkan UTM campaign yang valid"
+      },
+      "utm_term": {
+        "isString": "Silakan masukkan UTM term yang valid"
+      },
+      "utm_content": {
+        "isString": "Silakan masukkan UTM content yang valid"
+      }
+    },
     "LoginUserDto": {
       "email": {
         "isEmail": "Silakan masukkan alamat email yang valid",
         "isNotEmpty": "Silakan masukkan email Anda"
       },
       "password": {
-        "isString": "Password harus format string",
+        "isString": "Silakan masukkan password yang valid",
         "isNotEmpty": "Silakan masukkan kata sandi Anda"
+      },
+      "browser": {
+        "isString": "Silakan masukkan browser yang valid",
+        "isNotEmpty": "Silakan masukkan browser"
+      },
+      "device_info": {
+        "isString": "Silakan masukkan perangkat yang valid",
+        "isNotEmpty": "Silakan masukkan perangkat"
+      }
+    },
+    "CompleteProfileDto": {
+      "fullname": {
+        "isString": "Silakan masukkan nama lengkap yang valid",
+        "isNotEmpty": "Silakan masukkan nama lengkap",
+        "maxLength": "Nama lengkap maksimal 300 karakter",
+        "isAlpha": "Nama lengkap hanya boleh mengandung huruf"
+      },
+      "gender": {
+        "isString": "Silakan masukkan jenis kelamin yang valid",
+        "isNotEmpty": "Silakan pilih jenis kelamin",
+        "isIn": "Jenis kelamin harus male, female, atau prefer_not"
+      },
+      "birth_date": {
+        "matches": "Tanggal lahir harus dalam format YYYY-MM-DD",
+        "isAgeValid": "Usia tidak valid",
+        "isNotEmpty": "Silakan masukkan tanggal lahir"
+      },
+      "city_id": {
+        "isString": "Silakan masukkan ID kota yang valid",
+        "isNotEmpty": "Silakan masukkan ID kota",
+        "matches": "ID kota tidak valid"
+      },
+      "phone_code": {
+        "isString": "Silakan masukkan kode telepon yang valid",
+        "isNotEmpty": "Silakan masukkan kode telepon",
+        "matches": "Kode telepon harus diawali dengan + diikuti angka (contoh: +62)"
+      },
+      "phone_number": {
+        "isPhoneNumberValid": "Nomor telepon tidak valid",
+        "isNotEmpty": "Silakan masukkan nomor telepon"
       }
     }
   }

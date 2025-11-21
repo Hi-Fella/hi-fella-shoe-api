@@ -10,6 +10,7 @@ import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { Repository } from 'typeorm';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
+import { I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class UserService {
@@ -23,6 +24,7 @@ export class UserService {
     private readonly countryRepository: Repository<Country>,
     @InjectRepository(UserLoginHistory, 'pg')
     private readonly userLoginHistoryRepository: Repository<UserLoginHistory>,
+    private readonly i18n: I18nService,
   ) {}
 
   private async hashPassword(password: string): Promise<string> {
@@ -55,9 +57,13 @@ export class UserService {
 
     if (!!existingUser && existingUser.registration_step === null) {
       throw HttpResponseUtil.badRequest({
-        message: 'Input tidak valid',
+        message: this.i18n.t(
+          'validation.user.RegisterUserDto.email.isAlreadyRegistered',
+        ),
         field_errors: {
-          email: 'email sudah digunakan.',
+          email: this.i18n.t(
+            'validation.user.RegisterUserDto.email.isAlreadyRegistered',
+          ),
         },
       });
     }
@@ -153,7 +159,7 @@ export class UserService {
     const user = await this.findOneById(id_user);
     if (!user) {
       throw HttpResponseUtil.notFound({
-        message: 'User tidak ditemukan',
+        message: this.i18n.t('general.userNotFound'),
       });
     }
 
@@ -164,9 +170,9 @@ export class UserService {
       });
       if (!city) {
         throw HttpResponseUtil.badRequest({
-          message: 'City not found',
+          message: this.i18n.t('general.cityNotFound'),
           field_errors: {
-            city_id: 'City not found',
+            city_id: this.i18n.t('general.cityNotFound'),
           },
         });
       }
@@ -179,9 +185,9 @@ export class UserService {
       });
       if (!country) {
         throw HttpResponseUtil.badRequest({
-          message: 'Phone code not found',
+          message: this.i18n.t('general.phoneCodeNotFound'),
           field_errors: {
-            phone_code: 'Phone code not found',
+            phone_code: this.i18n.t('general.phoneCodeNotFound'),
           },
         });
       }

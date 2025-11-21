@@ -11,9 +11,6 @@ export class IsPasswordValidConstraint implements ValidatorConstraintInterface {
   validate(password: string) {
     if (!password) return false;
 
-    // Check minimum length of 8 characters
-    if (password.length < 8) return false;
-
     // Check for at least 1 uppercase letter
     if (!/[A-Z]/.test(password)) return false;
 
