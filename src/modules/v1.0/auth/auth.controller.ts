@@ -36,7 +36,6 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(AnyFilesInterceptor()) // intercepts multipart and allows form fields
   async login(@Body() dto: LoginUserDto, @IpAddress() ip: string) {
-    console.log('ip_address', ip);
     const loginData = await this.authService.login(dto);
 
     return HttpResponseUtil.success({

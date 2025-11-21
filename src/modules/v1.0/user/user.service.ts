@@ -138,7 +138,7 @@ export class UserService {
     // Validate city_id if provided
     if (updateData.city_id) {
       const city = await this.cityRepository.findOne({
-        where: { id_city: parseInt(updateData.city_id) },
+        where: { id_city: updateData.city_id },
       });
       if (!city) {
         throw HttpResponseUtil.badRequest({

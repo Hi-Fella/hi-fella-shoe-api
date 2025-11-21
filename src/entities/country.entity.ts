@@ -10,7 +10,7 @@ import { Province } from './province.entity';
 @Entity('hf_country')
 export class Country {
   @PrimaryGeneratedColumn({ type: 'bigint' })
-  id_country: number;
+  id_country: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   name_country: string;
