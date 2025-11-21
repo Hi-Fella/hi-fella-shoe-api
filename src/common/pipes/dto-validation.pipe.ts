@@ -55,6 +55,7 @@ export class DtoValidationPipe extends ValidationPipe {
           false,
         );
         // console.log('rules', rules);
+        // console.log('firstKey', firstKey);
 
         const rule = rules.find(
           (v) => v.propertyName === property && v.name === firstKey,

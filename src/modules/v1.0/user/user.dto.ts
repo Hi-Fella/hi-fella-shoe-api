@@ -1,4 +1,4 @@
-import { Match } from '@/common/dtos/match.dto';
+import { Match } from '@/common/decorators/validator/match.dto';
 import {
   IsBoolean,
   IsDateString,
@@ -10,7 +10,6 @@ import {
   IsString,
   Matches,
   MaxLength,
-  MinLength,
 } from 'class-validator';
 import { IsPasswordValid } from '@/common/decorators/validator/is-password-valid.decorator';
 

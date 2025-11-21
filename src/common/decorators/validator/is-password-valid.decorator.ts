@@ -36,6 +36,7 @@ export function IsPasswordValid() {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,
+      name: 'isPasswordValid',
       options: {},
       constraints: [],
       validator: IsPasswordValidConstraint,
