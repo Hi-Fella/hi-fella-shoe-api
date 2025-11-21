@@ -29,6 +29,14 @@ export class LoginUserDto {
   @IsString({ message: 'Password must be a string' })
   @IsNotEmpty()
   password: string;
+
+  @IsString({ message: 'Browser must be a string' })
+  @IsNotEmpty()
+  browser: string;
+
+  @IsString({ message: 'Browser must be a string' })
+  @IsNotEmpty()
+  device_info: string;
 }
 
 export interface LoginUserResponseData {

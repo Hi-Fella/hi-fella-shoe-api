@@ -1,23 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import { HttpResponseUtil } from '@/common/utils/httpresponse.util';
+import { User } from '@/entities/user.entity';
 import { UserService } from '@/modules/v1.0/user/user.service';
+import { Injectable } from '@nestjs/common';
 import {
-  LoginUserDto,
-  RegisterUserDto,
-  RegisterUserResponseData,
   CompleteProfileDto,
   CompleteProfileResponseData,
+  LoginUserDto,
   LoginUserResponseData,
+  RegisterUserDto,
+  RegisterUserResponseData,
 } from './auth.dto';
-import * as bcrypt from 'bcrypt';
-import { User } from '@/entities/user.entity';
-import { HttpResponseUtil } from '@/common/utils/httpresponse.util';
 
 @Injectable()
 export class AuthService {
   constructor(private userService: UserService) {}
 
-  async register(dto: RegisterUserDto): Promise<RegisterUserResponseData> {
+  async register(
+    dto: RegisterUserDto,
+    ip: string,
+  ): Promise<RegisterUserResponseData> {
     const userWithRelations = await this.userService.createUser(dto);
+
+    // Create login history record with token
+    await this.userService.findOrCreateUserLoginHistory({
+      token: userWithRelations.token_bearer,
+      user_id: userWithRelations.id_user,
+      ip_address: ip,
+      browser: dto.browser,
+      device_info: dto.device_info,
+    });
 
     // Format user data for response
     const userData: RegisterUserResponseData['user'] = {
@@ -54,7 +65,7 @@ export class AuthService {
     };
   }
 
-  async login(dto: LoginUserDto): Promise<LoginUserResponseData> {
+  async login(dto: LoginUserDto, ip: string): Promise<LoginUserResponseData> {
     const user = await this.userService.findByEmail(dto.email);
 
     if (!user) {
@@ -62,12 +73,15 @@ export class AuthService {
         message: 'Invalid credentials',
         field_errors: {
           email:
-            'We couldn’t recognize that email. Please make sure it’s correct.',
+            "We couldn't recognize that email. Please make sure it's correct.",
         },
       });
     }
 
-    const match = await bcrypt.compare(dto.password, user.password);
+    const match = await this.userService.checkHashedPassword(
+      dto.password,
+      user.password,
+    );
     if (!match) {
       throw HttpResponseUtil.unauthorized({
         message: 'Invalid credentials',
@@ -77,8 +91,16 @@ export class AuthService {
       });
     }
 
+    // Create login history record
+    const loginHistory = await this.userService.findOrCreateUserLoginHistory({
+      user_id: user.id_user,
+      ip_address: ip,
+      browser: dto.browser,
+      device_info: dto.device_info,
+    });
+
     return {
-      token_bearer: user.token_bearer,
+      token_bearer: loginHistory.token,
       token_socket: user.token_socket,
       user: {
         id: user.id_user,
@@ -108,9 +130,8 @@ export class AuthService {
   }
 
   async validateToken(token_bearer: string) {
-    // For static token bearer example:
     const user = await this.userService.findByToken(token_bearer);
-    return user || null;
+    return user;
 
     // For JWT:
     // return this.jwtService.verifyAsync(token);
@@ -174,7 +195,7 @@ export class AuthService {
     return {
       registration_type: userWithRelations.registration_type,
       registration_complete: true,
-      token_bearer: userWithRelations.token_bearer,
+      token_bearer: user.token_bearer,
       token_socket: userWithRelations.token_socket,
       user: userData,
     };

@@ -1,4 +1,5 @@
 import { HttpResponseUtil } from '@/common/utils/httpresponse.util';
+import { UserLoginHistory } from '@/entities/user-login-history.entity';
 import { City } from '@/entities/city.entity';
 import { Country } from '@/entities/country.entity';
 import { User } from '@/entities/user.entity';
@@ -20,11 +21,30 @@ export class UserService {
     private readonly cityRepository: Repository<City>,
     @InjectRepository(Country, 'pg')
     private readonly countryRepository: Repository<Country>,
+    @InjectRepository(UserLoginHistory, 'pg')
+    private readonly userLoginHistoryRepository: Repository<UserLoginHistory>,
   ) {}
 
   private async hashPassword(password: string): Promise<string> {
     const saltRounds = 10;
     return bcrypt.hash(password, saltRounds);
+  }
+
+  async checkHashedPassword(password: string, otherPassword: string) {
+    return await bcrypt.compare(password, otherPassword);
+  }
+
+  generateBearerToken() {
+    return crypto.randomBytes(32).toString('hex');
+  }
+
+  generateSocketToken() {
+    const dateStr = formatDate(new Date(), 'DDMMYYYY');
+    const tokenSocketRaw = `user-${dateStr}${crypto.randomBytes(32).toString('hex')}`;
+    const tokenSocket =
+      crypto.createHash('md5').update(tokenSocketRaw).digest('hex') +
+      crypto.randomBytes(3).toString('hex');
+    return tokenSocket;
   }
 
   async createUser(dto: CreateUserDto): Promise<User> {
@@ -45,15 +65,11 @@ export class UserService {
     // Hash password
     const hashedPassword = await this.hashPassword(dto.password);
 
-    // Generate token bearer
-    const tokenBearer = crypto.randomBytes(32).toString('hex');
+    // Generate token for login history
+    const token = this.generateBearerToken();
 
-    // Generate token socket
-    const dateStr = formatDate(new Date(), 'DDMMYYYY');
-    const tokenSocketRaw = `user-${dateStr}${crypto.randomBytes(32).toString('hex')}`;
-    const tokenSocket =
-      crypto.createHash('md5').update(tokenSocketRaw).digest('hex') +
-      crypto.randomBytes(3).toString('hex');
+    // Generate token socket for user entity
+    const tokenSocket = this.generateSocketToken();
 
     if (!existingUser) {
       // Create new user
@@ -66,7 +82,7 @@ export class UserService {
         utm_campaign: dto.utm_campaign,
         utm_term: dto.utm_term,
         utm_content: dto.utm_content,
-        token_bearer: tokenBearer,
+        token_bearer: token,
         token_socket: tokenSocket,
         registration_step: 1,
         registration_type: 'manual',
@@ -86,7 +102,6 @@ export class UserService {
         utm_campaign: dto.utm_campaign,
         utm_term: dto.utm_term,
         utm_content: dto.utm_content,
-        token_bearer: tokenBearer,
         token_socket: tokenSocket,
         registration_step: 1,
         registration_type: 'manual',
@@ -106,10 +121,17 @@ export class UserService {
   }
 
   async findByToken(token_bearer: string) {
-    return this.userRepository.findOne({
-      where: { token_bearer },
-      relations: ['city', 'city.province', 'city.province.country'],
+    const loginHistory = await this.userLoginHistoryRepository.findOne({
+      where: { token: token_bearer },
+      relations: ['user'],
     });
+
+    if (!!loginHistory?.user) {
+      loginHistory.user.token_bearer = token_bearer;
+      return loginHistory.user;
+    }
+
+    return null;
   }
 
   async viewUser(id_user: string) {
@@ -174,5 +196,50 @@ export class UserService {
     const savedUser = this.userRepository.save(user);
 
     return savedUser;
+  }
+
+  async findOrCreateUserLoginHistory(loginData: {
+    user_id: string;
+    ip_address: string;
+    browser?: string;
+    device_info?: string;
+    token?: string;
+    city_id?: string;
+    city_name?: string;
+    isp_provider?: string;
+  }): Promise<UserLoginHistory> {
+    // First, try to find existing login history
+    if (!!loginData.user_id && !!loginData.ip_address) {
+      const existingHistory = await this.userLoginHistoryRepository.findOne({
+        where: {
+          user_id: loginData.user_id,
+          ip_address: loginData.ip_address,
+          device_info: loginData.device_info,
+          browser: loginData.browser,
+        },
+        relations: ['user'],
+      });
+
+      if (!!existingHistory) {
+        return existingHistory;
+      }
+    }
+
+    // If not found, create a new login history record
+    if (!loginData?.token) {
+      loginData.token = this.generateBearerToken();
+    }
+    const loginHistory = this.userLoginHistoryRepository.create({
+      ...loginData,
+    });
+
+    return this.userLoginHistoryRepository.save(loginHistory);
+  }
+
+  async getUserLoginHistory(userId: string): Promise<UserLoginHistory[]> {
+    return this.userLoginHistoryRepository.find({
+      where: { user_id: userId },
+      order: { created_at: 'DESC' },
+    });
   }
 }

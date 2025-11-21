@@ -3,14 +3,21 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { User } from './user.entity';
 
 @Entity('hf_user_login_history')
 export class UserLoginHistory {
   @PrimaryColumn({ type: 'bigint', default: () => 'id_generator()' })
-  id_user: string;
+  id_user_login_history: string;
+
+  @ManyToOne(() => User, (user) => user.loginHistories)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
   @Column({ type: 'bigint', nullable: true })
   user_id: string;
@@ -32,6 +39,15 @@ export class UserLoginHistory {
 
   @Column({ type: 'varchar', length: 60, nullable: true })
   city_name: string;
+
+  @Column({ type: 'varchar', length: 80, nullable: true })
+  token: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  logout_at: Date;
+
+  @Column({ type: 'varchar', length: 10, nullable: true })
+  session_status: string;
 
   @CreateDateColumn()
   created_at: Date;

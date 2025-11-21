@@ -7,8 +7,10 @@ import {
   PrimaryColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { City } from './city.entity';
+import { UserLoginHistory } from './user-login-history.entity';
 
 @Entity('hf_users')
 export class User {
@@ -105,4 +107,7 @@ export class User {
 
   @DeleteDateColumn()
   deleted_at: Date;
+
+  @OneToMany(() => UserLoginHistory, (loginHistory) => loginHistory.user)
+  loginHistories: UserLoginHistory[];
 }

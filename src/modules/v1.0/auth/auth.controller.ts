@@ -25,8 +25,8 @@ export class AuthController {
 
   @Post('register')
   @UseInterceptors(AnyFilesInterceptor()) // intercepts multipart and allows form fields
-  async register(@Body() dto: RegisterUserDto) {
-    const createdData = await this.authService.register(dto);
+  async register(@Body() dto: RegisterUserDto, @IpAddress() ip: string) {
+    const createdData = await this.authService.register(dto, ip);
     return HttpResponseUtil.successCreated({
       data: createdData,
     });
@@ -36,7 +36,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(AnyFilesInterceptor()) // intercepts multipart and allows form fields
   async login(@Body() dto: LoginUserDto, @IpAddress() ip: string) {
-    const loginData = await this.authService.login(dto);
+    const loginData = await this.authService.login(dto, ip);
 
     return HttpResponseUtil.success({
       data: loginData,
