@@ -13,7 +13,7 @@ import { User } from './user.entity';
 @Entity('hf_city')
 export class City {
   @PrimaryGeneratedColumn({ type: 'int4' })
-  id_city: number;
+  id_city: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   name_city: string;
