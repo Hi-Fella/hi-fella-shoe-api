@@ -40,6 +40,23 @@ async function bootstrap() {
     new DdExceptionFilter(),
   );
 
+  // Configure CORS
+  let allowedHosts: string[] = [];
+  if (
+    !!process.env.CORS_ALLOWED_HOST &&
+    typeof process.env.CORS_ALLOWED_HOST === 'string'
+  ) {
+    allowedHosts = process.env.CORS_ALLOWED_HOST.split(',');
+  }
+  if (allowedHosts.length > 0) {
+    app.enableCors({
+      origin: allowedHosts,
+      credentials: true,
+    });
+  } else {
+    app.enableCors();
+  }
+
   // Start the server (HTTP + WebSocket via NestJS Gateway)
   const port = process.env.PORT ?? 3000;
   await app.listen(port);

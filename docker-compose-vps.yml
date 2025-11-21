@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   api:
-    image: '${DOCKER_REGISTRY_PATH}:latest'
+    image: '${DOCKER_REGISTRY_PATH}:${DOCKER_IMAGE_TAG}'
     container_name: hi-fella-shoe-api
     restart: unless-stopped
     environment:

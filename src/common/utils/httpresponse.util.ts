@@ -56,6 +56,7 @@ export class HttpResponseUtil {
       code: HttpStatus.UNAUTHORIZED,
       message: params?.message ?? 'unauthorized',
       data: params?.data ?? null,
+      field_errors: params?.field_errors ?? null,
     });
   }
 
