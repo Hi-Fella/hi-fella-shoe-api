@@ -40,6 +40,21 @@ export class InternalExceptionFilter implements ExceptionFilter {
       }
     }
 
+    // If it's a Unauthorized exception , use its custom response format
+    if (exception instanceof HttpException && exception.getStatus() === 401) {
+      const exceptionResponse = exception.getResponse();
+
+      // Check if this is our custom validation error response
+      if (
+        typeof exceptionResponse === 'object' &&
+        exceptionResponse !== null &&
+        'code' in exceptionResponse &&
+        'status' in exceptionResponse
+      ) {
+        return response.status(401).json(exceptionResponse);
+      }
+    }
+
     // If it's already a known HTTP exception, allow default behavior
     if (
       exception instanceof InternalServerErrorException === false &&

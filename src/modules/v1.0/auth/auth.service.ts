@@ -58,12 +58,23 @@ export class AuthService {
     const user = await this.userService.findByEmail(dto.email);
 
     if (!user) {
-      throw HttpResponseUtil.unauthorized({ message: 'Invalid credentials' });
+      throw HttpResponseUtil.unauthorized({
+        message: 'Invalid credentials',
+        field_errors: {
+          email:
+            'We couldn’t recognize that email. Please make sure it’s correct.',
+        },
+      });
     }
 
     const match = await bcrypt.compare(dto.password, user.password);
     if (!match) {
-      throw HttpResponseUtil.unauthorized({ message: 'Invalid credentials' });
+      throw HttpResponseUtil.unauthorized({
+        message: 'Invalid credentials',
+        field_errors: {
+          password: 'Incorrect password. Double-check and try again.',
+        },
+      });
     }
 
     return {
