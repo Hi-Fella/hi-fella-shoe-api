@@ -1,0 +1,14 @@
+{
+  "auth": {
+    "LoginUserDto": {
+      "email": {
+        "isEmail": "Silakan masukkan alamat email yang valid",
+        "isNotEmpty": "Silakan masukkan email Anda"
+      },
+      "password": {
+        "isString": "Password harus format string",
+        "isNotEmpty": "Silakan masukkan kata sandi Anda"
+      }
+    }
+  }
+}

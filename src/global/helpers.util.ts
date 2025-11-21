@@ -29,6 +29,10 @@ export function formatDate(
   return '';
 }
 
+export function capitalizeFirstLetter(s: string) {
+  return s && String(s[0]).toUpperCase() + String(s).slice(1);
+}
+
 // Attach to globalThis so it’s available globally
 declare global {
   // extend global type
@@ -36,6 +40,8 @@ declare global {
     value: string | number | Date | dayjs.Dayjs,
     format: string,
   ) => string;
+  var capitalizeFirstLetter: (s: string) => string;
 }
 
 globalThis.formatDate = formatDate;
+globalThis.capitalizeFirstLetter = capitalizeFirstLetter;
