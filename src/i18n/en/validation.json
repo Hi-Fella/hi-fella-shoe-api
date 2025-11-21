@@ -1,0 +1,15 @@
+{
+  "user": {
+    "LoginUserDto": {
+      "email": {
+        "IsEmail": "Invalid email format",
+        "IsNotEmpty": "Email is required"
+      },
+      "password": {
+        "MinLength": "Password must be at least {t0} characters",
+        "IsString": "Password must be string",
+        "IsNotEmpty": "Password is required"
+      }
+    }
+  }
+}

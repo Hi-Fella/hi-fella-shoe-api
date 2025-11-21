@@ -1,7 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { VersioningType } from '@nestjs/common';
-import { DtoValidationPipe } from '@/common/pipes/dto-validation.pipe';
 import { InternalExceptionFilter } from '@/common/filters/internal-exception.filter';
 import { DdExceptionFilter } from '@/common/filters/dd-exception.filter';
 import { ConfigService } from '@nestjs/config';
@@ -10,10 +8,21 @@ import '@/global/helpers.util';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import {
+  installDtoRequireInterceptor,
+  // listTrackedDtos,
+} from '@/common/utils/dto-file-tracker.utils';
+
+// CRITICAL: Install interceptor BEFORE importing AppModule
+installDtoRequireInterceptor();
+
+import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const config = app.get(ConfigService);
+  // Debug: List all tracked DTOs
+  // listTrackedDtos();
 
   // Serve static files from the 'public' directory
   app.useStaticAssets(join(__dirname, '..', 'public'));
@@ -22,17 +31,11 @@ async function bootstrap() {
   const logger = app.get(WINSTON_MODULE_NEST_PROVIDER);
   app.useLogger(logger);
 
-  // Global prefix for API
-  app.setGlobalPrefix('api');
-
   // ✅ Enable versioning
   app.enableVersioning({
     type: VersioningType.URI, // or HEADER, MEDIA_TYPE, CUSTOM
     defaultVersion: '1.0', // optional, fallback version
   });
-
-  // Global Pipes
-  app.useGlobalPipes(new DtoValidationPipe());
 
   // Global Filters
   app.useGlobalFilters(
@@ -58,7 +61,7 @@ async function bootstrap() {
   }
 
   // Start the server (HTTP + WebSocket via NestJS Gateway)
-  const port = process.env.PORT ?? 3000;
+  const port = config.get<string>('PORT') ?? 3000;
   await app.listen(port);
 
   logger.log(`Application is running on port ${port}`);
