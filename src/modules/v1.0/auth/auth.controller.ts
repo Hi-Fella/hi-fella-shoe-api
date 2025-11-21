@@ -1,18 +1,19 @@
+import { TokenAuthGuard } from '@/common/guards/token-auth.guard';
 import { HttpResponseUtil } from '@/common/utils/httpresponse.util';
+import { IpAddress } from '@/common/decorators/ip-address.decorator';
 import {
   Body,
   Controller,
-  Post,
-  UseInterceptors,
-  UseGuards,
-  Request,
   HttpCode,
   HttpStatus,
+  Post,
+  Request,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
+import { CompleteProfileDto, LoginUserDto, RegisterUserDto } from './auth.dto';
 import { AuthService } from './auth.service';
-import { LoginUserDto, RegisterUserDto, CompleteProfileDto } from './auth.dto';
-import { TokenAuthGuard } from '@/common/guards/token-auth.guard';
 import type { AuthenticatedRequest } from './auth.types';
 
 @Controller({
@@ -34,8 +35,10 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(AnyFilesInterceptor()) // intercepts multipart and allows form fields
-  async login(@Body() dto: LoginUserDto) {
+  async login(@Body() dto: LoginUserDto, @IpAddress() ip: string) {
+    console.log('ip_address', ip);
     const loginData = await this.authService.login(dto);
+
     return HttpResponseUtil.success({
       data: loginData,
     });
