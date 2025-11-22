@@ -46,11 +46,13 @@
     "LoginUserDto": {
       "email": {
         "isEmail": "Silakan masukkan alamat email yang valid",
-        "isNotEmpty": "Silakan masukkan email Anda"
+        "isNotEmpty": "Silakan masukkan email Anda",
+        "isAlreadyRegistered": "Email ini belum terdaftar"
       },
       "password": {
-        "isString": "Silakan masukkan password yang valid",
-        "isNotEmpty": "Silakan masukkan kata sandi Anda"
+        "isString": "Silakan masukkan kata sandi yang valid",
+        "isNotEmpty": "Silakan masukkan kata sandi Anda",
+        "isPasswordCorrect": "Kata sandi salah. Silakan periksa kembali dan coba lagi"
       },
       "browser": {
         "isString": "Silakan masukkan browser yang valid",

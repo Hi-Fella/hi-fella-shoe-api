@@ -10,10 +10,14 @@ import {
   RegisterUserDto,
   RegisterUserResponseData,
 } from './auth.dto';
+import { I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private readonly i18n: I18nService,
+  ) {}
 
   async register(
     dto: RegisterUserDto,
@@ -70,10 +74,13 @@ export class AuthService {
 
     if (!user) {
       throw HttpResponseUtil.unauthorized({
-        message: 'Invalid credentials',
+        message: this.i18n.t(
+          'validation.auth.LoginUserDto.email.isAlreadyRegistered',
+        ),
         field_errors: {
-          email:
-            "We couldn't recognize that email. Please make sure it's correct.",
+          email: this.i18n.t(
+            'validation.auth.LoginUserDto.email.isAlreadyRegistered',
+          ),
         },
       });
     }
@@ -84,9 +91,13 @@ export class AuthService {
     );
     if (!match) {
       throw HttpResponseUtil.unauthorized({
-        message: 'Invalid credentials',
+        message: this.i18n.t(
+          'validation.auth.LoginUserDto.password.isPasswordCorrect',
+        ),
         field_errors: {
-          password: 'Incorrect password. Double-check and try again.',
+          password: this.i18n.t(
+            'validation.auth.LoginUserDto.password.isPasswordCorrect',
+          ),
         },
       });
     }

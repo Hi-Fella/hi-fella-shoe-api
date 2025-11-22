@@ -58,11 +58,11 @@ export class UserService {
     if (!!existingUser && existingUser.registration_step === null) {
       throw HttpResponseUtil.badRequest({
         message: this.i18n.t(
-          'validation.user.RegisterUserDto.email.isAlreadyRegistered',
+          'validation.auth.RegisterUserDto.email.isAlreadyRegistered',
         ),
         field_errors: {
           email: this.i18n.t(
-            'validation.user.RegisterUserDto.email.isAlreadyRegistered',
+            'validation.auth.RegisterUserDto.email.isAlreadyRegistered',
           ),
         },
       });
