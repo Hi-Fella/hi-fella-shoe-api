@@ -94,6 +94,12 @@
         "isPhoneNumberValid": "Nomor telepon tidak valid",
         "isNotEmpty": "Silakan masukkan nomor telepon"
       }
+    },
+    "ValidateGoogleOAuthDto": {
+      "access_token": {
+        "isString": "Token tidak valid",
+        "isNotEmpty": "Token tidak valid"
+      }
     }
   }
 }

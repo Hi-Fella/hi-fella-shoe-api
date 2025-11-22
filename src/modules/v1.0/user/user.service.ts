@@ -69,7 +69,10 @@ export class UserService {
     }
 
     // Hash password
-    const hashedPassword = await this.hashPassword(dto.password);
+    let hashedPassword: string | undefined = undefined;
+    if (!!dto.password) {
+      hashedPassword = await this.hashPassword(dto.password);
+    }
 
     // Generate token for login history
     const token = this.generateBearerToken();
@@ -88,10 +91,11 @@ export class UserService {
         utm_campaign: dto.utm_campaign,
         utm_term: dto.utm_term,
         utm_content: dto.utm_content,
+        google_id: dto.google_id,
         token_bearer: token,
         token_socket: tokenSocket,
         registration_step: 1,
-        registration_type: 'manual',
+        registration_type: !!dto.google_id ? 'google' : 'manual',
         account_status: true, // Set default account status
       });
 
@@ -120,10 +124,12 @@ export class UserService {
   }
 
   async findByEmail(email: string) {
-    return this.userRepository.findOne({
+    const user = this.userRepository.findOne({
       where: { email },
       relations: ['city', 'city.province', 'city.province.country'],
     });
+
+    return user;
   }
 
   async findByToken(token_bearer: string) {

@@ -18,15 +18,9 @@ export class CreateUserDto {
   @IsEmail()
   email: string;
 
-  @IsPasswordValid()
-  @MinLength(8)
   @IsString()
-  @IsNotEmpty()
-  password: string;
-
-  @Match('password')
-  @IsNotEmpty()
-  password_confirmation: string;
+  @IsOptional()
+  password?: string;
 
   @IsString()
   @IsNotEmpty()
@@ -59,6 +53,10 @@ export class CreateUserDto {
   @IsString()
   @IsOptional()
   utm_content?: string;
+
+  @IsString()
+  @IsOptional()
+  google_id?: string;
 }
 
 export class UpdateUserDto {
