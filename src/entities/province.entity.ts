@@ -1,18 +1,24 @@
 import {
   Column,
   Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-  ManyToOne,
   JoinColumn,
+  ManyToOne,
   OneToMany,
+  PrimaryColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import { Country } from './country.entity';
 import { City } from './city.entity';
+import { Country } from './country.entity';
 
 @Entity('hf_province')
 export class Province {
-  @PrimaryGeneratedColumn({ type: 'int4' })
+  @PrimaryColumn({
+    type: 'int4',
+    transformer: {
+      to: (value: string) => parseInt(value),
+      from: (value: number) => value.toString(),
+    },
+  })
   id_province: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
@@ -22,8 +28,15 @@ export class Province {
   @JoinColumn({ name: 'country_id' })
   country: Country;
 
-  @Column({ type: 'int', nullable: true })
-  country_id: number;
+  @Column({
+    type: 'int',
+    nullable: true,
+    transformer: {
+      to: (value: string) => (!!value ? parseInt(value) : value),
+      from: (value: number) => (!!value ? value.toString() : value),
+    },
+  })
+  country_id: string;
 
   @Column({ type: 'varchar', length: 30, nullable: true })
   nama_provinsi: string;

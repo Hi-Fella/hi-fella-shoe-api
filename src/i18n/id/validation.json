@@ -101,5 +101,32 @@
         "isNotEmpty": "Token tidak valid"
       }
     }
+  },
+  "location": {
+    "GetCountriesDto": {
+      "page": {
+        "isNumber": "Halaman tidak valid",
+        "min": "Halaman tidak valid"
+      },
+      "limit": {
+        "isNumber": "Limit tidak valid",
+        "min": "Limit tidak valid",
+        "max": "Limit tidak valid"
+      }
+    },
+    "GetCitiesDto": {
+      "page": {
+        "isNumber": "Halaman tidak valid",
+        "min": "Halaman tidak valid"
+      },
+      "limit": {
+        "isNumber": "Limit tidak valid",
+        "min": "Limit tidak valid",
+        "max": "Limit tidak valid"
+      },
+      "country_id": {
+        "isStringNumeric": "Input negara tidak valid"
+      }
+    }
   }
 }

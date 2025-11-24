@@ -1,15 +1,15 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
   OneToMany,
+  PrimaryColumn,
 } from 'typeorm';
 import { Province } from './province.entity';
 
 @Entity('hf_country')
 export class Country {
-  @PrimaryGeneratedColumn({ type: 'bigint' })
+  @PrimaryColumn({ type: 'bigint' })
   id_country: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
