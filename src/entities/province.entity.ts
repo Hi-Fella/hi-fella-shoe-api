@@ -15,8 +15,8 @@ export class Province {
   @PrimaryColumn({
     type: 'int4',
     transformer: {
-      to: (value: string) => parseInt(value),
-      from: (value: number) => value.toString(),
+      to: (value: string) => (!!value ? parseInt(value) : value),
+      from: (value: number) => (!!value ? value.toString() : value),
     },
   })
   id_province: string;

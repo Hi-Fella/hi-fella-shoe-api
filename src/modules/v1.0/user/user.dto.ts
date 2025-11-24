@@ -187,6 +187,6 @@ export interface UserData {
   } | null;
   city: {
     id: string;
-    country: string;
+    name: string;
   } | null;
 }
