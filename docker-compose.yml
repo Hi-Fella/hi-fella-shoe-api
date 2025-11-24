@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: runner # Use the production stage
-    image: '${DOCKER_REGISTRY_PATH}:latest'
+    image: '${DOCKER_REGISTRY_PATH}:${DOCKER_IMAGE_TAG}'
     container_name: hi-fella-shoe-api
     restart: unless-stopped
     ports:

@@ -67,11 +67,17 @@ To deploy the image from the Docker Registry:
    docker compose pull
    ```
 
-5. Run the container:
+5. Create volume folder (change permission to nestjs:nodejs to those folder when got permission denied when start the container)
+
+   ```bash
+   mkdir logs && mkdir redis_data
+   ```
+
+6. Run the container:
    ```bash
    docker compose up -d
    ```
-6. Last, go to your http server config, and proxy the http request into current running container's `<ip>:<port>`, you can run `docker network ls` and also `docker inspect <network id>` to check the `ip`.
+7. Last, go to your http server config, and proxy the http request into current running container's `<ip>:<port>`, you can run `docker network ls` and also `docker inspect <network id>` to check the `ip`.
 
 ## Environment Variables
 

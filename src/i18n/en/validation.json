@@ -1,0 +1,97 @@
+{
+  "auth": {
+    "RegisterUserDto": {
+      "email": {
+        "isEmail": "Please enter a valid email address",
+        "isNotEmpty": "Email is required",
+        "isAlreadyRegistered": "This email is already registered"
+      },
+      "password": {
+        "isPasswordValid": "Invalid password",
+        "isString": "Please enter a valid password",
+        "isNotEmpty": "Password is required",
+        "minLength": "Password is required"
+      },
+      "password_confirmation": {
+        "match": "Password confirmation does not match",
+        "isNotEmpty": "Password confirmation is required"
+      },
+      "browser": {
+        "isString": "Please enter a valid browser",
+        "isNotEmpty": "Browser information is required"
+      },
+      "device_info": {
+        "isString": "Please enter a valid device info",
+        "isNotEmpty": "Device information is required"
+      },
+      "utm_id": {
+        "isString": "Please enter a valid UTM ID"
+      },
+      "utm_source": {
+        "isString": "Please enter a valid UTM source"
+      },
+      "utm_medium": {
+        "isString": "Please enter a valid UTM medium"
+      },
+      "utm_campaign": {
+        "isString": "Please enter a valid UTM campaign"
+      },
+      "utm_term": {
+        "isString": "Please enter a valid UTM term"
+      },
+      "utm_content": {
+        "isString": "Please enter a valid UTM content"
+      }
+    },
+    "LoginUserDto": {
+      "email": {
+        "isEmail": "Please enter a valid email address",
+        "isNotEmpty": "Email is required"
+      },
+      "password": {
+        "isString": "Please enter a valid password",
+        "isNotEmpty": "Password is required"
+      },
+      "browser": {
+        "isString": "Please enter a valid browser",
+        "isNotEmpty": "Browser information is required"
+      },
+      "device_info": {
+        "isString": "Please enter a valid device info",
+        "isNotEmpty": "Device information is required"
+      }
+    },
+    "CompleteProfileDto": {
+      "fullname": {
+        "isString": "Please enter a valid full name",
+        "isNotEmpty": "Full name is required",
+        "maxLength": "Full name must not exceed 300 characters",
+        "isAlpha": "Full name must contain only letters"
+      },
+      "gender": {
+        "isString": "Please enter a valid gender",
+        "isNotEmpty": "Gender is required",
+        "isIn": "Gender must be male, female, or prefer_not"
+      },
+      "birth_date": {
+        "matches": "Birth date must be in YYYY-MM-DD format",
+        "isAgeValid": "Invalid age",
+        "isNotEmpty": "Birth date is required"
+      },
+      "city_id": {
+        "isString": "Please enter a valid city ID",
+        "isNotEmpty": "City ID is required",
+        "matches": "Invalid City ID"
+      },
+      "phone_code": {
+        "isString": "Please enter a valid phone code",
+        "isNotEmpty": "Phone code is required",
+        "matches": "Phone code must start with + followed by numbers (e.g., +62)"
+      },
+      "phone_number": {
+        "isPhoneNumberValid": "Invalid phone number",
+        "isNotEmpty": "Phone number is required"
+      }
+    }
+  }
+}

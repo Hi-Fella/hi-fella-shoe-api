@@ -4,16 +4,56 @@ import {
   ArgumentsHost,
   InternalServerErrorException,
   HttpException,
+  Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 @Catch()
 export class InternalExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(InternalExceptionFilter.name);
+
   constructor(private config: ConfigService) {}
 
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
+    const request = ctx.getRequest();
+
+    // Log the exception
+    this.logger.error(
+      `${request.method} ${request.url} - ${exception.message}`,
+      exception.stack,
+    );
+
+    // If it's a BadRequestException from DtoValidationPipe, use its custom response format
+    if (exception instanceof HttpException && exception.getStatus() === 400) {
+      const exceptionResponse = exception.getResponse();
+
+      // Check if this is our custom validation error response
+      if (
+        typeof exceptionResponse === 'object' &&
+        exceptionResponse !== null &&
+        'code' in exceptionResponse &&
+        'status' in exceptionResponse
+      ) {
+        return response.status(400).json(exceptionResponse);
+      }
+    }
+
+    // If it's a Unauthorized exception , use its custom response format
+    if (exception instanceof HttpException && exception.getStatus() === 401) {
+      const exceptionResponse = exception.getResponse();
+
+      // Check if this is our custom validation error response
+      if (
+        typeof exceptionResponse === 'object' &&
+        exceptionResponse !== null &&
+        'code' in exceptionResponse &&
+        'status' in exceptionResponse
+      ) {
+        return response.status(401).json(exceptionResponse);
+      }
+    }
 
     // If it's already a known HTTP exception, allow default behavior
     if (

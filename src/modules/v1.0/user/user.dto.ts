@@ -1,46 +1,192 @@
-import { Type } from 'class-transformer';
+import { Match } from '@/common/decorators/validator/match.dto';
 import {
-  IsNotEmpty,
+  IsBoolean,
+  IsDateString,
   IsEmail,
+  IsIn,
+  IsInt,
+  IsNotEmpty,
   IsOptional,
   IsString,
-  IsInt,
+  Matches,
+  MaxLength,
   MinLength,
 } from 'class-validator';
-import { Match } from '@/common/dtos/match.dto';
+import { IsPasswordValid } from '@/common/decorators/validator/is-password-valid.decorator';
 
-export class RegisterUserDto {
-  @IsEmail({}, { message: 'Invalid email format' })
-  @IsNotEmpty()
+export class CreateUserDto {
+  @IsEmail()
   email: string;
 
-  @MinLength(6, { message: 'Password must be at least 6 characters' })
-  @IsString({ message: 'Password must be a string' })
-  @IsNotEmpty()
-  password: string;
+  @IsString()
+  @IsOptional()
+  password?: string;
 
-  @Match('password', { message: 'The passwords did not match' })
-  @IsNotEmpty()
-  password_confirmation: string;
-
-  @MinLength(3)
   @IsString()
   @IsNotEmpty()
-  name: string;
+  browser: string;
 
-  @IsInt()
-  @Type(() => Number)
+  @IsString()
+  @IsNotEmpty()
+  device_info: string;
+
+  @IsString()
   @IsOptional()
-  age: number;
+  utm_id?: string;
+
+  @IsString()
+  @IsOptional()
+  utm_source?: string;
+
+  @IsString()
+  @IsOptional()
+  utm_medium?: string;
+
+  @IsString()
+  @IsOptional()
+  utm_campaign?: string;
+
+  @IsString()
+  @IsOptional()
+  utm_term?: string;
+
+  @IsString()
+  @IsOptional()
+  utm_content?: string;
+
+  @IsString()
+  @IsOptional()
+  google_id?: string;
 }
 
-export class LoginUserDto {
-  @IsEmail({}, { message: 'Invalid email format' })
-  @IsNotEmpty()
-  email: string;
+export class UpdateUserDto {
+  @IsPasswordValid()
+  @IsOptional()
+  password?: string;
 
-  @MinLength(6, { message: 'Password must be at least 6 characters' })
-  @IsString({ message: 'Password must be a string' })
-  @IsNotEmpty()
-  password: string;
+  @IsString()
+  @IsOptional()
+  @MaxLength(300)
+  name?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(20)
+  @Matches(/^\d+$/)
+  phone?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(10)
+  @Matches(/^\+\d+$/)
+  phone_code?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(10)
+  @IsIn(['male', 'female', 'prefer_not'])
+  gender?: 'male' | 'female' | 'prefer_not';
+
+  @Matches(/^\d{4}-\d{2}-\d{2}$/)
+  @IsOptional()
+  birthdate?: string;
+
+  @IsString()
+  @IsOptional()
+  @Matches(/^\d+$/)
+  city_id?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(255)
+  profile_image?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(255)
+  banner_image?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  account_status?: boolean;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(80)
+  token_socket?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(80)
+  token_bearer?: string;
+
+  @IsDateString()
+  @IsOptional()
+  last_login?: string;
+
+  @IsDateString()
+  @IsOptional()
+  email_verified_at?: string;
+
+  @IsInt()
+  @IsOptional()
+  registration_step?: number | null;
+
+  @IsString()
+  @IsOptional()
+  registration_type?: 'manual' | 'google';
+
+  @IsDateString()
+  @IsOptional()
+  finish_registration_at?: string;
+
+  @IsString()
+  @IsOptional()
+  about?: string;
+
+  @IsString()
+  @IsOptional()
+  google_id?: string;
+
+  @IsString()
+  @IsOptional()
+  utm_id?: string;
+
+  @IsString()
+  @IsOptional()
+  utm_source?: string;
+
+  @IsString()
+  @IsOptional()
+  utm_medium?: string;
+
+  @IsString()
+  @IsOptional()
+  utm_campaign?: string;
+
+  @IsString()
+  @IsOptional()
+  utm_term?: string;
+
+  @IsString()
+  @IsOptional()
+  utm_content?: string;
+}
+
+export interface UserData {
+  id: string;
+  email: string;
+  name: string | null;
+  phone_code: string | null;
+  phone: string | null;
+  gender: string | null;
+  birth_date: string | null;
+  country: {
+    id: string;
+    name: string;
+  } | null;
+  city: {
+    id: string;
+    name: string;
+  } | null;
 }

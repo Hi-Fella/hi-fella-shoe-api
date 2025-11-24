@@ -4,6 +4,13 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true,
-    "assets": ["**/*.hbs", "**/*.png", "**/*.jpg", "**/*.jpeg", "assets/**/*"]
+    "assets": [
+      "**/*.hbs",
+      "**/*.png",
+      "**/*.jpg",
+      "**/*.jpeg",
+      "assets/**/*",
+      { "include": "i18n/**/*", "watchAssets": true }
+    ]
   }
 }
