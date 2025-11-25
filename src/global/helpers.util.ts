@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+// import { AzureBlobStorageService } from '@/azure-blob-storage/azure-blob-storage.service';
 
 export function formatDate(
   value: string | number | Date | dayjs.Dayjs,
@@ -33,6 +34,16 @@ export function capitalizeFirstLetter(s: string) {
   return s && String(s[0]).toUpperCase() + String(s).slice(1);
 }
 
+export function numberToColumnLetter(num: number): string {
+  let letter = '';
+  while (num > 0) {
+    const mod = (num - 1) % 26;
+    letter = String.fromCharCode(65 + mod) + letter;
+    num = Math.floor((num - 1) / 26);
+  }
+  return letter;
+}
+
 // Attach to globalThis so it’s available globally
 declare global {
   // extend global type
@@ -41,7 +52,9 @@ declare global {
     format: string,
   ) => string;
   var capitalizeFirstLetter: (s: string) => string;
+  var numberToColumnLetter: (num: number) => string;
 }
 
 globalThis.formatDate = formatDate;
 globalThis.capitalizeFirstLetter = capitalizeFirstLetter;
+globalThis.numberToColumnLetter = numberToColumnLetter;

@@ -12,6 +12,8 @@ import {
   installDtoRequireInterceptor,
   // listTrackedDtos,
 } from '@/common/utils/dto-file-tracker.utils';
+import { AzureBlobStorageService } from '@/azure-blob-storage/azure-blob-storage.service';
+import { initBlobAzureStorage } from '@/common/types/global';
 
 // CRITICAL: Install interceptor BEFORE importing AppModule
 installDtoRequireInterceptor();
@@ -30,6 +32,9 @@ async function bootstrap() {
   // use winston as global logger
   const logger = app.get(WINSTON_MODULE_NEST_PROVIDER);
   app.useLogger(logger);
+
+  const azureService = app.get(AzureBlobStorageService);
+  initBlobAzureStorage(azureService); // setup global function
 
   // ✅ Enable versioning
   app.enableVersioning({
