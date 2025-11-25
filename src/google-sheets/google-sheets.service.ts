@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { google } from 'googleapis';
+import { google, sheets_v4 } from 'googleapis';
 import { ConfigService } from '@nestjs/config';
 
 interface FindRowsResult {
@@ -10,7 +10,7 @@ interface FindRowsResult {
 
 @Injectable()
 export class GoogleSheetsService {
-  private sheets;
+  private sheets: sheets_v4.Sheets;
   private spreadsheetId: string;
 
   constructor(private readonly config: ConfigService) {
@@ -59,7 +59,7 @@ export class GoogleSheetsService {
 
     if (!sheet) throw new Error(`Sheet "${sheetName}" not found`);
 
-    return sheet.properties.sheetId!;
+    return sheet.properties?.sheetId!;
   }
 
   async findRowsByColumns({
@@ -90,7 +90,6 @@ export class GoogleSheetsService {
     });
 
     const allValues: any[][] = res.data.values || [];
-    console.log('allValues', allValues);
 
     // 4️⃣ Filter rows
     const results: FindRowsResult[] = [];
@@ -202,7 +201,6 @@ export class GoogleSheetsService {
       .length;
     const lastHeaderLetter = numberToColumnLetter(headerLength);
     const rangeClear = `${sheetName}!${range ? range : `A2:${lastHeaderLetter}`}`;
-    console.log(rangeClear);
 
     return this.sheets.spreadsheets.values.clear({
       spreadsheetId,

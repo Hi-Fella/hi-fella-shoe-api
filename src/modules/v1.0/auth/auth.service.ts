@@ -41,6 +41,9 @@ export class AuthService {
       device_info: dto.device_info,
     });
 
+    // sync to google sheet
+    await this.userService.syncUserToGoogleSheetsQueue(userWithRelations.email);
+
     // Format user data for response
     const userData: RegisterUserResponseData['user'] = {
       id: userWithRelations.id_user,
@@ -92,6 +95,9 @@ export class AuthService {
       browser: dto.browser,
       device_info: dto.device_info,
     });
+
+    // sync to google sheet
+    await this.userService.syncUserToGoogleSheetsQueue(userWithRelations.email);
 
     // Format user data for response
     const userData: RegisterUserResponseData['user'] = {
@@ -304,6 +310,9 @@ export class AuthService {
         message: this.i18n.t('general.userNotFound'),
       });
     }
+
+    // sync to google sheet
+    await this.userService.syncUserToGoogleSheetsQueue(userWithRelations.email);
 
     // Format user data for response
     const userData: CompleteProfileResponseData['user'] = {
