@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-// import { AzureBlobStorageService } from '@/azure-blob-storage/azure-blob-storage.service';
 
 export function formatDate(
   value: string | number | Date | dayjs.Dayjs,
