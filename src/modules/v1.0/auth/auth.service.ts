@@ -273,7 +273,7 @@ export class AuthService {
     // validate registration step
     if (user.registration_step !== 1) {
       throw HttpResponseUtil.badRequest({
-        message: 'Registration had been completed previously',
+        message: 'Profil sudah dilengkapi sebelumnya',
       });
     }
 
@@ -292,7 +292,9 @@ export class AuthService {
     // Get the updated user
     const userWithRelations = await this.userService.findOneById(user.id_user);
     if (!userWithRelations) {
-      throw HttpResponseUtil.notFound({ message: 'User not found' });
+      throw HttpResponseUtil.notFound({
+        message: this.i18n.t('general.userNotFound'),
+      });
     }
 
     // Format user data for response
@@ -343,7 +345,9 @@ export class AuthService {
         `Google oAuth Token validation failed: ${tokenInfoResponse.statusText}`,
       );
       throw HttpResponseUtil.unauthorized({
-        message: 'Masuk dengan google gagal',
+        message: this.i18n.t(
+          'validation.auth.ValidateGoogleOAuthDto.access_token.isFailed',
+        ),
       });
     }
 
@@ -356,7 +360,9 @@ export class AuthService {
         `Google oAuth Token audience mismatch. Expected: ${clientId}, Got: ${tokenInfo.audience}`,
       );
       throw HttpResponseUtil.unauthorized({
-        message: 'Masuk dengan google gagal',
+        message: this.i18n.t(
+          'validation.auth.ValidateGoogleOAuthDto.access_token.isFailed',
+        ),
       });
     }
 
@@ -375,7 +381,9 @@ export class AuthService {
         `Google oAuth Failed to fetch user info: ${userInfoResponse.statusText}`,
       );
       throw HttpResponseUtil.unauthorized({
-        message: 'Masuk dengan google gagal',
+        message: this.i18n.t(
+          'validation.auth.ValidateGoogleOAuthDto.access_token.isFailed',
+        ),
       });
     }
 
