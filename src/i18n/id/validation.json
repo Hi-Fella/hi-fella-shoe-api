@@ -9,7 +9,7 @@
       "password": {
         "isPasswordValid": "Kata sandi harus mencakup huruf kapital, angka, dan karakter khusus",
         "isString": "Silakan masukkan kata sandi yang valid",
-        "isNotEmpty": "Kata sandi harus diisi",
+        "isNotEmpty": "Silakan masukkan kata sandi anda",
         "minLength": "Kata sandi harus diisi"
       },
       "password_confirmation": {
@@ -17,11 +17,11 @@
         "isNotEmpty": "Silakan konfirmasi kata sandi anda"
       },
       "browser": {
-        "isString": "Silakan masukkan browser yang valid",
+        "isString": "Browser tidak valid",
         "isNotEmpty": "Silakan masukkan browser"
       },
       "device_info": {
-        "isString": "Silakan masukkan informasi perangkat yang valid",
+        "isString": "Informasi perangkat tidak valid",
         "isNotEmpty": "Silakan masukkan informasi perangkat"
       },
       "utm_id": {
@@ -55,50 +55,51 @@
         "isPasswordCorrect": "Kata sandi salah. Silakan periksa kembali dan coba lagi"
       },
       "browser": {
-        "isString": "Silakan masukkan browser yang valid",
+        "isString": "Browser tidak valid",
         "isNotEmpty": "Silakan masukkan browser"
       },
       "device_info": {
-        "isString": "Silakan masukkan perangkat yang valid",
-        "isNotEmpty": "Silakan masukkan perangkat"
+        "isString": "Informasi perangkat tidak valid",
+        "isNotEmpty": "Silakan masukkan informasi perangkat"
       }
     },
     "CompleteProfileDto": {
       "fullname": {
-        "isString": "Silakan masukkan nama lengkap yang valid",
-        "isNotEmpty": "Silakan masukkan nama lengkap",
-        "maxLength": "Nama lengkap maksimal 300 karakter",
-        "isAlpha": "Nama lengkap hanya boleh mengandung huruf"
+        "isString": "Nama hanya boleh berisi huruf",
+        "isNotEmpty": "Nama Lengkap harus diisi",
+        "maxLength": "Nama Lengkap harus diisi maksimum 300 karakter",
+        "isAlpha": "Nama hanya boleh berisi huruf"
       },
       "gender": {
-        "isString": "Silakan masukkan jenis kelamin yang valid",
-        "isNotEmpty": "Silakan pilih jenis kelamin",
-        "isIn": "Jenis kelamin harus male, female, atau prefer_not"
+        "isString": "Jenis kelamin harus diisi sesuai pilihan yang tersedia",
+        "isNotEmpty": "Jenis Kelamin harus diisi",
+        "isIn": "Jenis kelamin harus diisi sesuai pilihan yang tersedia"
       },
       "birth_date": {
-        "matches": "Tanggal lahir harus dalam format YYYY-MM-DD",
-        "isAgeValid": "Usia tidak valid",
-        "isNotEmpty": "Silakan masukkan tanggal lahir"
+        "matches": "Tanggal lahir menggunakan format yang tidak valid",
+        "isAgeValid": "Tanggal lahir tidak valid. Usia harus antara 10 hingga 120 tahun",
+        "isNotEmpty": "Tanggal lahir harus diisi"
       },
       "city_id": {
-        "isString": "Silakan masukkan ID kota yang valid",
-        "isNotEmpty": "Silakan masukkan ID kota",
-        "matches": "ID kota tidak valid"
+        "isString": "Kota yang dipilih tidak valid",
+        "isNotEmpty": "Kota harus diisi",
+        "matches": "Kota yang dipilih tidak valid"
       },
       "phone_code": {
-        "isString": "Silakan masukkan kode telepon yang valid",
-        "isNotEmpty": "Silakan masukkan kode telepon",
-        "matches": "Kode telepon harus diawali dengan + diikuti angka (contoh: +62)"
+        "isString": "Kode telepon tidak valid",
+        "isNotEmpty": "Kode telepon harus diisi",
+        "matches": "Kode telepon tidak valid, harus diawali dengan + (contoh: +62)"
       },
       "phone_number": {
-        "isPhoneNumberValid": "Nomor telepon tidak valid",
-        "isNotEmpty": "Silakan masukkan nomor telepon"
+        "isPhoneNumberValid": "Nomor telepon harus terdiri dari 5-15 digit (termasuk kode telepon)",
+        "isNotEmpty": "Nomor telepon harus diisi"
       }
     },
     "ValidateGoogleOAuthDto": {
       "access_token": {
         "isString": "Token tidak valid",
-        "isNotEmpty": "Token tidak valid"
+        "isNotEmpty": "Token tidak valid",
+        "isFailed": "Masuk dengan google gagal"
       }
     }
   },
