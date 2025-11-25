@@ -30,6 +30,7 @@ export class AuthService {
     ip: string,
   ): Promise<RegisterUserResponseData> {
     const userWithRelations = await this.userService.createUser(dto);
+    throw new Error('asdad');
 
     // Create login history record with token
     await this.userService.findOrCreateUserLoginHistory({

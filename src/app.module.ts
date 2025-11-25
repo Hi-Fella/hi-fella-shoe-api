@@ -24,6 +24,7 @@ import {
   HeaderResolver,
 } from 'nestjs-i18n';
 import { DtoValidationPipe } from '@/common/pipes/dto-validation.pipe';
+import { AzureBlobStorageModule } from './azure-blob-storage/azure-blob-storage.module';
 
 @Module({
   imports: [
@@ -111,6 +112,7 @@ import { DtoValidationPipe } from '@/common/pipes/dto-validation.pipe';
     AuthModule,
     UserModule,
     LocationModule,
+    AzureBlobStorageModule,
   ],
   controllers: [AppController],
   providers: [

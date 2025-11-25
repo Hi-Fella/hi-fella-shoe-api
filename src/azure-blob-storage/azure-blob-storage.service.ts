@@ -18,14 +18,7 @@ export class AzureBlobStorageService {
     private sasCredential: StorageSharedKeyCredential,
     @Inject('AZURE_BLOB_CONTAINER')
     private containerName: string,
-  ) {
-    console.log(
-      'data',
-      this.blobServiceClient,
-      this.sasCredential,
-      this.containerName,
-    );
-  }
+  ) {}
 
   private getContainer() {
     return this.blobServiceClient.getContainerClient(this.containerName);

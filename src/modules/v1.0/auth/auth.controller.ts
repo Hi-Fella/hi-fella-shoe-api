@@ -21,6 +21,7 @@ import {
 } from './auth.dto';
 import { AuthService } from './auth.service';
 import type { AuthenticatedRequest } from './auth.types';
+import { Transactional } from '@/common/decorators/transactional.decorator';
 
 @Controller({
   path: 'auth',
@@ -34,6 +35,7 @@ export class AuthController {
 
   @Post('register')
   @UseInterceptors(AnyFilesInterceptor()) // intercepts multipart and allows form fields
+  @Transactional({ typeorm: ['pg'] })
   async register(@Body() dto: RegisterUserDto, @IpAddress() ip: string) {
     const createdData = await this.authService.register(dto, ip);
     return HttpResponseUtil.successCreated({
