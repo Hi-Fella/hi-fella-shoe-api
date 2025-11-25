@@ -68,7 +68,7 @@
         "isString": "Nama hanya boleh berisi huruf",
         "isNotEmpty": "Nama Lengkap harus diisi",
         "maxLength": "Nama Lengkap harus diisi maksimum 300 karakter",
-        "isAlpha": "Nama hanya boleh berisi huruf"
+        "matches": "Nama hanya boleh berisi huruf"
       },
       "gender": {
         "isString": "Jenis kelamin harus diisi sesuai pilihan yang tersedia",

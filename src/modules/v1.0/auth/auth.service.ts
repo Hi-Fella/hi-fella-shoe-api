@@ -65,6 +65,8 @@ export class AuthService {
               name: userWithRelations.city.name_city,
             }
           : null,
+      profile_image: null,
+      banner_image: null,
     };
 
     return {
@@ -115,6 +117,8 @@ export class AuthService {
               name: userWithRelations.city.name_city,
             }
           : null,
+      profile_image: await assetStorage(userWithRelations.profile_image),
+      banner_image: await assetStorage(userWithRelations.banner_image),
     };
 
     return {
@@ -195,6 +199,8 @@ export class AuthService {
                 name: user.city.name_city,
               }
             : null,
+        profile_image: await assetStorage(user.profile_image),
+        banner_image: await assetStorage(user.banner_image),
       },
     };
   }
@@ -254,6 +260,8 @@ export class AuthService {
                 name: user.city.name_city,
               }
             : null,
+        profile_image: await assetStorage(user.profile_image),
+        banner_image: await assetStorage(user.banner_image),
       },
     };
   }
@@ -321,6 +329,8 @@ export class AuthService {
               name: userWithRelations.city.name_city,
             }
           : null,
+      profile_image: null,
+      banner_image: null,
     };
 
     return {
