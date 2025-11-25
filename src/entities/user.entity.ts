@@ -42,7 +42,14 @@ export class User {
   @JoinColumn({ name: 'city_id' })
   city: City;
 
-  @Column({ type: 'bigint', nullable: true })
+  @Column({
+    type: 'int4',
+    nullable: true,
+    transformer: {
+      to: (value: string) => (!!value ? parseInt(value) : value),
+      from: (value: number) => (!!value ? value.toString() : value),
+    },
+  })
   city_id: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })

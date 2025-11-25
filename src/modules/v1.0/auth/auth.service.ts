@@ -53,15 +53,15 @@ export class AuthService {
         : null,
       country: userWithRelations?.city?.province?.country
         ? {
-            id: userWithRelations.city.province.country.id_country.toString(),
+            id: userWithRelations.city.province.country.id_country,
             name: userWithRelations.city.province.country.name_country,
           }
         : null,
       city:
         userWithRelations?.city && userWithRelations.city.province?.country
           ? {
-              id: userWithRelations.city.id_city.toString(),
-              country: userWithRelations.city.province.country.name_country,
+              id: userWithRelations.city.id_city,
+              name: userWithRelations.city.name_city,
             }
           : null,
     };
@@ -103,15 +103,15 @@ export class AuthService {
         : null,
       country: userWithRelations?.city?.province?.country
         ? {
-            id: userWithRelations.city.province.country.id_country.toString(),
+            id: userWithRelations.city.province.country.id_country,
             name: userWithRelations.city.province.country.name_country,
           }
         : null,
       city:
         userWithRelations?.city && userWithRelations.city.province?.country
           ? {
-              id: userWithRelations.city.id_city.toString(),
-              country: userWithRelations.city.province.country.name_country,
+              id: userWithRelations.city.id_city,
+              name: userWithRelations.city.name_city,
             }
           : null,
     };
@@ -183,15 +183,15 @@ export class AuthService {
           : null,
         country: user.city?.province?.country
           ? {
-              id: user.city.province.country.id_country.toString(),
+              id: user.city.province.country.id_country,
               name: user.city.province.country.name_country,
             }
           : null,
         city:
           user.city && user.city.province?.country
             ? {
-                id: user.city.id_city.toString(),
-                country: user.city.province.country.name_country,
+                id: user.city.id_city,
+                name: user.city.name_city,
               }
             : null,
       },
@@ -242,15 +242,15 @@ export class AuthService {
           : null,
         country: user.city?.province?.country
           ? {
-              id: user.city.province.country.id_country.toString(),
+              id: user.city.province.country.id_country,
               name: user.city.province.country.name_country,
             }
           : null,
         city:
           user.city && user.city.province?.country
             ? {
-                id: user.city.id_city.toString(),
-                country: user.city.province.country.name_country,
+                id: user.city.id_city,
+                name: user.city.name_city,
               }
             : null,
       },
@@ -307,15 +307,15 @@ export class AuthService {
         : null,
       country: userWithRelations?.city?.province?.country
         ? {
-            id: userWithRelations.city.province.country.id_country.toString(),
+            id: userWithRelations.city.province.country.id_country,
             name: userWithRelations.city.province.country.name_country,
           }
         : null,
       city:
         userWithRelations?.city && userWithRelations.city.province?.country
           ? {
-              id: userWithRelations.city.id_city.toString(),
-              country: userWithRelations.city.province.country.name_country,
+              id: userWithRelations.city.id_city,
+              name: userWithRelations.city.name_city,
             }
           : null,
     };

@@ -1,18 +1,24 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
   OneToMany,
+  PrimaryColumn,
 } from 'typeorm';
 import { Province } from './province.entity';
 import { User } from './user.entity';
 
 @Entity('hf_city')
 export class City {
-  @PrimaryGeneratedColumn({ type: 'int4' })
+  @PrimaryColumn({
+    type: 'int4',
+    transformer: {
+      to: (value: string) => (!!value ? parseInt(value) : value),
+      from: (value: number) => (!!value ? value.toString() : value),
+    },
+  })
   id_city: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
@@ -22,8 +28,15 @@ export class City {
   @JoinColumn({ name: 'province_id' })
   province: Province;
 
-  @Column({ type: 'int', nullable: true })
-  province_id: number;
+  @Column({
+    type: 'int',
+    nullable: true,
+    transformer: {
+      to: (value: string) => (!!value ? parseInt(value) : value),
+      from: (value: number) => (!!value ? value.toString() : value),
+    },
+  })
+  province_id: string;
 
   @Column({ type: 'boolean', default: true, nullable: true })
   status: boolean;

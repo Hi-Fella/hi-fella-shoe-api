@@ -2,6 +2,7 @@ import { LoggerMiddleware } from '@/common/middlewares/logger.middleware';
 import { DailyRotateTransport } from '@/common/transports/winston-daily-rotate.transport';
 import { AuthModule } from '@/modules/v1.0/auth/auth.module';
 import { UserModule } from '@/modules/v1.0/user/user.module';
+import { LocationModule } from '@/modules/v1.0/location/location.module';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -109,6 +110,7 @@ import { DtoValidationPipe } from '@/common/pipes/dto-validation.pipe';
     }),
     AuthModule,
     UserModule,
+    LocationModule,
   ],
   controllers: [AppController],
   providers: [
