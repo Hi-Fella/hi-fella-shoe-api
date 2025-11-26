@@ -1,7 +1,11 @@
 import { HttpResponseUtil } from '@/common/utils/httpresponse.util';
 import { Controller, Get, Query, UseInterceptors } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
-import { GetEventsDto, GetEventCategoriesDto } from './event.dto';
+import {
+  GetEventsDto,
+  GetEventCategoriesDto,
+  GetEventSubCategoriesDto,
+} from './event.dto';
 import { EventService } from './event.service';
 
 @Controller({
@@ -27,7 +31,7 @@ export class EventController {
     });
   }
 
-  @Get('categories')
+  @Get('category')
   @UseInterceptors(AnyFilesInterceptor())
   async getEventCategories(@Query() query: GetEventCategoriesDto) {
     const categories = await this.eventService.getEventCategories({
@@ -37,6 +41,20 @@ export class EventController {
     });
     return HttpResponseUtil.success({
       data: categories,
+    });
+  }
+
+  @Get('sub-category')
+  @UseInterceptors(AnyFilesInterceptor())
+  async getEventSubCategories(@Query() query: GetEventSubCategoriesDto) {
+    const subCategories = await this.eventService.getEventSubCategories({
+      page: query.page,
+      limit: query.limit,
+      search: query.search,
+      category: query.category,
+    });
+    return HttpResponseUtil.success({
+      data: subCategories,
     });
   }
 }

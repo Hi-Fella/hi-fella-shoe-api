@@ -1,6 +1,7 @@
 import { PaginationUtil } from '@/common/utils/pagination.util';
 import { Events } from '@/entities/event.entity';
 import { EventCategory } from '@/entities/event-category.entity';
+import { EventSubCategory } from '@/entities/event-subcategory.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -9,6 +10,7 @@ import {
   EventTimeFilter,
   GetEventsResponse,
   GetEventCategoriesResponse,
+  GetEventSubCategoriesResponse,
 } from './event.dto';
 
 @Injectable()
@@ -18,6 +20,8 @@ export class EventService {
     private readonly eventRepository: Repository<Events>,
     @InjectRepository(EventCategory, 'pg')
     private readonly eventCategoryRepository: Repository<EventCategory>,
+    @InjectRepository(EventSubCategory, 'pg')
+    private readonly eventSubCategoryRepository: Repository<EventSubCategory>,
   ) {}
 
   async getEvents(params: {
@@ -175,6 +179,52 @@ export class EventService {
         id: category.id_event_category,
         name: category.name,
         slug: category.slug || '',
+      }),
+    );
+
+    return {
+      data: formattedData,
+      total,
+      page,
+      total_pages,
+    };
+  }
+
+  async getEventSubCategories(params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    category?: string;
+  }): Promise<GetEventSubCategoriesResponse> {
+    const { search, category } = params;
+
+    const queryBuilder = this.eventSubCategoryRepository
+      .createQueryBuilder('subcategory')
+      .leftJoinAndSelect('subcategory.category', 'category')
+      .orderBy('subcategory.name', 'ASC');
+
+    if (search) {
+      queryBuilder.andWhere('subcategory.name ILIKE :search', {
+        search: `%${search}%`,
+      });
+    }
+
+    if (category) {
+      queryBuilder.andWhere('category.slug = :category', {
+        category,
+      });
+    }
+
+    const { data, total, page, total_pages } = await PaginationUtil.paginate(
+      queryBuilder,
+      params,
+    );
+
+    const formattedData: GetEventSubCategoriesResponse['data'] = data.map(
+      (subcategory) => ({
+        id: subcategory.id_event_subcategory,
+        name: subcategory.name,
+        slug: subcategory.slug || '',
       }),
     );
 

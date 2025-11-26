@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryColumn,
@@ -18,6 +19,7 @@ export class EventSubCategory {
   id_event_category: string;
 
   @ManyToOne(() => EventCategory, (category) => category.subcategories)
+  @JoinColumn({ name: 'id_event_category' })
   category: EventCategory;
 
   @OneToMany(() => Events, (event) => event.subcategory)

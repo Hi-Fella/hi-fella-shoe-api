@@ -79,3 +79,23 @@ export class GetEventCategoriesDto extends PaginationDto {
 export type GetEventCategoriesResponse = PaginationResponse<
   EventCategoryData[]
 >;
+
+export interface EventSubCategoryData {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+export class GetEventSubCategoriesDto extends PaginationDto {
+  @IsOptional()
+  @IsString()
+  search?: string;
+
+  @IsOptional()
+  @IsString()
+  category?: string;
+}
+
+export type GetEventSubCategoriesResponse = PaginationResponse<
+  EventCategoryData[]
+>;
