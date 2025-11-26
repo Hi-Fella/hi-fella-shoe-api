@@ -1,5 +1,6 @@
 import { PaginationUtil } from '@/common/utils/pagination.util';
 import { Events } from '@/entities/event.entity';
+import { EventCategory } from '@/entities/event-category.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -7,6 +8,7 @@ import {
   EventStatusFilter,
   EventTimeFilter,
   GetEventsResponse,
+  GetEventCategoriesResponse,
 } from './event.dto';
 
 @Injectable()
@@ -14,6 +16,8 @@ export class EventService {
   constructor(
     @InjectRepository(Events, 'pg')
     private readonly eventRepository: Repository<Events>,
+    @InjectRepository(EventCategory, 'pg')
+    private readonly eventCategoryRepository: Repository<EventCategory>,
   ) {}
 
   async getEvents(params: {
@@ -128,6 +132,44 @@ export class EventService {
               null,
           },
         };
+      }),
+    );
+
+    return {
+      data: formattedData,
+      total,
+      page,
+      total_pages,
+    };
+  }
+
+  async getEventCategories(params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+  }): Promise<GetEventCategoriesResponse> {
+    const { search } = params;
+
+    const queryBuilder = this.eventCategoryRepository
+      .createQueryBuilder('category')
+      .orderBy('category.name', 'ASC');
+
+    if (search) {
+      queryBuilder.andWhere('category.name ILIKE :search', {
+        search: `%${search}%`,
+      });
+    }
+
+    const { data, total, page, total_pages } = await PaginationUtil.paginate(
+      queryBuilder,
+      params,
+    );
+
+    const formattedData: GetEventCategoriesResponse['data'] = data.map(
+      (category) => ({
+        id: category.id_event_category,
+        name: category.name,
+        slug: category.slug || '',
       }),
     );
 
