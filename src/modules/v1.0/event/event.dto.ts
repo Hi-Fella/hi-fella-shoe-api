@@ -1,7 +1,7 @@
 import { PaginationDto, PaginationResponse } from '@/app.dto';
-import { IsStringNumeric } from '@/common/decorators/validator/is-string-numeric.decorator';
 import { TransformEmptyToUndefined } from '@/common/decorators/validator/transform-empty-to-undefined';
 import { EventStatus } from '@/entities/event.entity';
+import { Transform } from 'class-transformer';
 import { IsIn, IsOptional, IsString } from 'class-validator';
 
 export enum EventTimeFilter {
@@ -35,8 +35,19 @@ export class GetEventsDto extends PaginationDto {
   search?: string;
 
   @IsOptional()
-  @IsString()
-  category?: string;
+  @Transform(({ value }) => {
+    // If it's already an array, return as is
+    if (Array.isArray(value)) {
+      return value;
+    }
+    // If it's a string, split by comma to support multiple categories
+    if (typeof value === 'string' && value.includes(',')) {
+      return value.split(',').map((item) => item.trim());
+    }
+    // Otherwise return the original value
+    return value;
+  })
+  category?: string | string[];
 
   @IsOptional()
   @IsString()

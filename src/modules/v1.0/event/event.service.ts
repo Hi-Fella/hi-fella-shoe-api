@@ -24,7 +24,7 @@ export class EventService {
     page?: number;
     limit?: number;
     search?: string;
-    category_slug?: string;
+    category_slug?: string | string[];
     status?: EventStatusFilter;
     time?: EventTimeFilter;
   }): Promise<GetEventsResponse> {
@@ -44,9 +44,15 @@ export class EventService {
     }
 
     if (category_slug) {
-      queryBuilder.andWhere('category.slug = :category_slug', {
-        category_slug,
-      });
+      if (Array.isArray(category_slug)) {
+        queryBuilder.andWhere('category.slug IN (:...category_slug)', {
+          category_slug,
+        });
+      } else {
+        queryBuilder.andWhere('category.slug = :category_slug', {
+          category_slug,
+        });
+      }
     }
 
     // Apply status filter
