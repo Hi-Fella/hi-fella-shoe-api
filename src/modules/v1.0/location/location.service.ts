@@ -40,13 +40,15 @@ export class LocationService {
       params,
     );
 
-    const formattedData: GetCountriesResponse['data'] = data.map((c) => ({
-      id: c.id_country,
-      name: c.name_country,
-      country_code: c.country_code,
-      phone_code: c.phone_code,
-      flag: c.flag,
-    }));
+    const formattedData: GetCountriesResponse['data'] = await Promise.all(
+      data.map(async (c) => ({
+        id: c.id_country,
+        name: c.name_country,
+        country_code: c.country_code,
+        phone_code: c.phone_code,
+        flag: await assetStorage(c.flag),
+      })),
+    );
 
     return {
       data: formattedData,

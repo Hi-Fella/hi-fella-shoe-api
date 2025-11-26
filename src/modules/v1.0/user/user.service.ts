@@ -3,19 +3,24 @@ import { UserLoginHistory } from '@/entities/user-login-history.entity';
 import { City } from '@/entities/city.entity';
 import { Country } from '@/entities/country.entity';
 import { User } from '@/entities/user.entity';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
+import { InjectQueue } from '@nestjs/bullmq';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { Repository } from 'typeorm';
+import { Queue } from 'bullmq';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 import { I18nService } from 'nestjs-i18n';
 import { UserRepository } from '@/common/repositories/user.repository';
 import { UserLoginHistoryRepository } from '@/common/repositories/user-login-history.repository';
+import { GoogleSheetsService } from '@/google-sheets/google-sheets.service';
 
 @Injectable()
 export class UserService {
+  private readonly logger = new Logger(UserService.name);
+
   constructor(
     private readonly config: ConfigService,
     private readonly userRepository: UserRepository,
@@ -25,6 +30,8 @@ export class UserService {
     private readonly countryRepository: Repository<Country>,
     private readonly userLoginHistoryRepository: UserLoginHistoryRepository,
     private readonly i18n: I18nService,
+    private readonly googleSheetsService: GoogleSheetsService,
+    @InjectQueue('user-sync-gsheet') private userSyncQueue: Queue,
   ) {}
 
   private async hashPassword(password: string): Promise<string> {
@@ -253,5 +260,91 @@ export class UserService {
       where: { user_id: userId },
       order: { created_at: 'DESC' },
     });
+  }
+
+  async syncUserToGoogleSheets(
+    email: string,
+  ): Promise<{ updated: boolean; message: string }> {
+    try {
+      // Find user in database with all relations
+      const user = await this.userRepository.findOne({
+        where: { email },
+        relations: ['city', 'city.province', 'city.province.country'],
+      });
+
+      if (!user) {
+        return { updated: false, message: 'User not found' };
+      }
+
+      // Check if user exists in Google Sheets
+      const existingRows = await this.googleSheetsService.findRowsByColumns({
+        sheetName: 'User',
+        columnFilters: { 'Email Address': email },
+      });
+
+      // Prepare user data for Google Sheets
+      const userData = [
+        user.name || '', // Account Name
+        user.email || '', // Email Address
+        user.phone || '', // Phone
+        '', // Company Name
+        '', // Company Category
+        '', // Job Title
+        user.city?.name_city || '', // City
+        user.city?.province?.country?.name_country || '', // Country
+        user.registration_step === null ? 'Finish' : 'Unfinish', // Registration Status
+        user.registration_step?.toString() || '', // Registration Step
+        formatDate(user.created_at, 'DD MMMM YYYY'), // Created At
+        user.utm_id || '', // UTM ID
+        user.utm_source || '', // UTM Source
+        user.utm_medium || '', // UTM Medium
+        user.utm_campaign || '', // UTM Campaign
+        user.utm_term || '', // UTM Term
+        user.utm_content || '', // UTM Content
+        '', // Business Type
+      ];
+
+      if (existingRows.length > 0) {
+        // Update existing row
+        const rowIndex = existingRows[0].rowIndex; // 0-based index for the range
+        const range = `User!A${rowIndex + 1}:R${rowIndex + 1}`; // Convert to 1-based for range
+
+        await this.googleSheetsService.write({
+          range,
+          values: [userData],
+        });
+
+        return { updated: true, message: 'User data updated in Google Sheets' };
+      } else {
+        // Append new row
+        await this.googleSheetsService.append({
+          sheetName: 'User',
+          values: userData,
+        });
+
+        return { updated: true, message: 'User data added to Google Sheets' };
+      }
+    } catch (error) {
+      this.logger.error('Error syncing user to Google Sheets:', error);
+      return {
+        updated: false,
+        message: 'Failed to sync user to Google Sheets',
+      };
+    }
+  }
+
+  async syncUserToGoogleSheetsQueue(
+    email: string,
+  ): Promise<{ queued: boolean; message: string }> {
+    try {
+      await this.userSyncQueue.add('syncUserToGoogleSheetsQueue', { email });
+      this.logger.log(
+        `syncUserToGoogleSheetsQueue job added to queue for email: ${email}`,
+      );
+      return { queued: true, message: 'User sync job added to queue' };
+    } catch (error) {
+      this.logger.error('Error syncUserToGoogleSheetsQueue:', error);
+      return { queued: false, message: 'Failed to add user sync job to queue' };
+    }
   }
 }

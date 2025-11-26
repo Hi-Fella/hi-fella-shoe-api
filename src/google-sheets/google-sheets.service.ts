@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { google } from 'googleapis';
+import { sheets_v4, sheets } from '@googleapis/sheets';
+import { GoogleAuth } from 'google-auth-library';
 import { ConfigService } from '@nestjs/config';
 
 interface FindRowsResult {
@@ -10,7 +11,7 @@ interface FindRowsResult {
 
 @Injectable()
 export class GoogleSheetsService {
-  private sheets;
+  private sheets: sheets_v4.Sheets;
   private spreadsheetId: string;
 
   constructor(private readonly config: ConfigService) {
@@ -20,12 +21,12 @@ export class GoogleSheetsService {
     );
     this.spreadsheetId = config.get<string>('GOOGLE_SHEET_USER', '');
 
-    const auth = new google.auth.GoogleAuth({
+    const auth = new GoogleAuth({
       keyFile,
       scopes: ['https://www.googleapis.com/auth/spreadsheets'],
     });
 
-    this.sheets = google.sheets({ version: 'v4', auth });
+    this.sheets = sheets({ version: 'v4', auth });
   }
 
   async getHeaders({
@@ -59,7 +60,7 @@ export class GoogleSheetsService {
 
     if (!sheet) throw new Error(`Sheet "${sheetName}" not found`);
 
-    return sheet.properties.sheetId!;
+    return sheet.properties?.sheetId!;
   }
 
   async findRowsByColumns({
@@ -90,7 +91,6 @@ export class GoogleSheetsService {
     });
 
     const allValues: any[][] = res.data.values || [];
-    console.log('allValues', allValues);
 
     // 4️⃣ Filter rows
     const results: FindRowsResult[] = [];
@@ -202,7 +202,6 @@ export class GoogleSheetsService {
       .length;
     const lastHeaderLetter = numberToColumnLetter(headerLength);
     const rangeClear = `${sheetName}!${range ? range : `A2:${lastHeaderLetter}`}`;
-    console.log(rangeClear);
 
     return this.sheets.spreadsheets.values.clear({
       spreadsheetId,

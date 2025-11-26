@@ -68,7 +68,7 @@
         "isString": "Nama hanya boleh berisi huruf",
         "isNotEmpty": "Nama Lengkap harus diisi",
         "maxLength": "Nama Lengkap harus diisi maksimum 300 karakter",
-        "isAlpha": "Nama hanya boleh berisi huruf"
+        "matches": "Nama hanya boleh berisi huruf"
       },
       "gender": {
         "isString": "Jenis kelamin harus diisi sesuai pilihan yang tersedia",
@@ -127,6 +127,28 @@
       },
       "country_id": {
         "isStringNumeric": "Input negara tidak valid"
+      }
+    }
+  },
+  "event": {
+    "GetEventsDto": {
+      "page": {
+        "isNumber": "Halaman tidak valid",
+        "min": "Halaman tidak valid"
+      },
+      "limit": {
+        "isNumber": "Limit tidak valid",
+        "min": "Limit tidak valid",
+        "max": "Limit tidak valid"
+      },
+      "category_id": {
+        "isStringNumeric": "Kategori yang dipilih tidak valid"
+      },
+      "status": {
+        "isIn": "Status harus diisi sesuai pilihan yang tersedia"
+      },
+      "time": {
+        "isIn": "Waktu harus diisi sesuai pilihan yang tersedia"
       }
     }
   }

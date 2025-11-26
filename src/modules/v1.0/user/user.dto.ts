@@ -189,4 +189,6 @@ export interface UserData {
     id: string;
     name: string;
   } | null;
+  profile_image: string | null;
+  banner_image: string | null;
 }

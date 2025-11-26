@@ -15,6 +15,7 @@ services:
       - .env
     volumes:
       - ./logs:/app/logs
+      - ./.hi-fella-google.json:/app/.hi-fella-google.json
     depends_on:
       - redis
 

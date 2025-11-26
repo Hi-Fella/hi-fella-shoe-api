@@ -26,7 +26,11 @@ export function formatDate(
     return '';
   }
 
-  return '';
+  try {
+    return dayjs(value).format(format);
+  } catch (error) {
+    return '';
+  }
 }
 
 export function capitalizeFirstLetter(s: string) {
