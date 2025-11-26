@@ -35,8 +35,8 @@ export class GetEventsDto extends PaginationDto {
   search?: string;
 
   @IsOptional()
-  @IsStringNumeric()
-  category_id?: string;
+  @IsString()
+  category?: string;
 
   @IsOptional()
   @IsString()

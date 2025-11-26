@@ -49,6 +49,7 @@ export class Events {
   id_event_category: string;
 
   @ManyToOne(() => EventCategory, (category) => category.events)
+  @JoinColumn({ name: 'id_event_category' })
   category: EventCategory;
 
   @Column({ type: 'bigint', nullable: true })

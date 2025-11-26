@@ -141,8 +141,8 @@
         "min": "Limit tidak valid",
         "max": "Limit tidak valid"
       },
-      "category_id": {
-        "isStringNumeric": "Kategori yang dipilih tidak valid"
+      "category": {
+        "isString": "Kategori yang dipilih tidak valid"
       },
       "status": {
         "isIn": "Status harus diisi sesuai pilihan yang tersedia"

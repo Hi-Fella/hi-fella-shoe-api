@@ -18,7 +18,7 @@ export class EventController {
       page: query.page,
       limit: query.limit,
       search: query.search,
-      category_id: query.category_id,
+      category_slug: query.category,
       status: query.status,
       time: query.time,
     });

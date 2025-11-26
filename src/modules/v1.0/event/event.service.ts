@@ -24,16 +24,15 @@ export class EventService {
     page?: number;
     limit?: number;
     search?: string;
-    category_id?: string;
+    category_slug?: string;
     status?: EventStatusFilter;
     time?: EventTimeFilter;
   }): Promise<GetEventsResponse> {
-    const { search, category_id, status, time } = params;
+    const { search, category_slug, status, time } = params;
 
     const queryBuilder = this.eventRepository
       .createQueryBuilder('event')
       .leftJoinAndSelect('event.category', 'category')
-      .leftJoinAndSelect('event.subcategory', 'subcategory')
       .leftJoinAndSelect('event.tickets', 'tickets')
       .leftJoinAndSelect('event.user_creator', 'user_creator');
 
@@ -44,9 +43,9 @@ export class EventService {
       });
     }
 
-    if (category_id) {
-      queryBuilder.andWhere('event.id_event_category = :category_id', {
-        category_id,
+    if (category_slug) {
+      queryBuilder.andWhere('category.slug = :category_slug', {
+        category_slug,
       });
     }
 
