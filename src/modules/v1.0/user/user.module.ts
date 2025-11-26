@@ -8,6 +8,8 @@ import { User } from '@/entities/user.entity';
 import { City } from '@/entities/city.entity';
 import { Country } from '@/entities/country.entity';
 import { UserLoginHistory } from '@/entities/user-login-history.entity';
+import { UserRepository } from '@/common/repositories/user.repository';
+import { UserLoginHistoryRepository } from '@/common/repositories/user-login-history.repository';
 import { GoogleSheetsModule } from '@/google-sheets/google-sheets.module';
 
 @Module({
@@ -18,7 +20,12 @@ import { GoogleSheetsModule } from '@/google-sheets/google-sheets.module';
       name: 'user-sync-gsheet',
     }),
   ],
-  providers: [UserService, UserProcessor],
+  providers: [
+    UserService,
+    UserRepository,
+    UserLoginHistoryRepository,
+    UserProcessor,
+  ],
   exports: [UserService],
   controllers: [UserController],
 })

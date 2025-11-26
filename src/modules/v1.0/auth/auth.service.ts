@@ -15,6 +15,9 @@ import {
   ValidateGoogleOAuthResponseData,
 } from './auth.dto';
 import { I18nService } from 'nestjs-i18n';
+import { Transactional } from '@/common/decorators/transactional.decorator';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -23,14 +26,16 @@ export class AuthService {
   constructor(
     private userService: UserService,
     private readonly i18n: I18nService,
+    @InjectDataSource('pg') // <--- Add this decorator
+    private readonly dataSource: DataSource,
   ) {}
 
+  @Transactional('pg')
   async register(
     dto: RegisterUserDto,
     ip: string,
   ): Promise<RegisterUserResponseData> {
     const userWithRelations = await this.userService.createUser(dto);
-    // throw new Error('asdad');
 
     // Create login history record with token
     await this.userService.findOrCreateUserLoginHistory({

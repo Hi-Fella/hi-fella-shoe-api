@@ -13,6 +13,8 @@ import { Repository } from 'typeorm';
 import { Queue } from 'bullmq';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 import { I18nService } from 'nestjs-i18n';
+import { UserRepository } from '@/common/repositories/user.repository';
+import { UserLoginHistoryRepository } from '@/common/repositories/user-login-history.repository';
 import { GoogleSheetsService } from '@/google-sheets/google-sheets.service';
 
 @Injectable()
@@ -21,14 +23,12 @@ export class UserService {
 
   constructor(
     private readonly config: ConfigService,
-    @InjectRepository(User, 'pg')
-    private readonly userRepository: Repository<User>,
+    private readonly userRepository: UserRepository,
     @InjectRepository(City, 'pg')
     private readonly cityRepository: Repository<City>,
     @InjectRepository(Country, 'pg')
     private readonly countryRepository: Repository<Country>,
-    @InjectRepository(UserLoginHistory, 'pg')
-    private readonly userLoginHistoryRepository: Repository<UserLoginHistory>,
+    private readonly userLoginHistoryRepository: UserLoginHistoryRepository,
     private readonly i18n: I18nService,
     private readonly googleSheetsService: GoogleSheetsService,
     @InjectQueue('user-sync-gsheet') private userSyncQueue: Queue,
