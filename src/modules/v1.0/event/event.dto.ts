@@ -1,5 +1,6 @@
 import { PaginationDto, PaginationResponse } from '@/app.dto';
 import { IsStringNumeric } from '@/common/decorators/validator/is-string-numeric.decorator';
+import { TransformEmptyToUndefined } from '@/common/decorators/validator/transform-empty-to-undefined';
 import { EventStatus } from '@/entities/event.entity';
 import { IsIn, IsOptional, IsString } from 'class-validator';
 
@@ -18,13 +19,13 @@ export enum EventStatusFilter {
 export interface EventData {
   id: string;
   name: string;
-  image: string;
+  image: string | null;
   price: string;
   date: string;
   status: EventStatus;
   organizer: {
     name: string;
-    image: string;
+    image: string | null;
   };
 }
 
@@ -40,11 +41,13 @@ export class GetEventsDto extends PaginationDto {
   @IsOptional()
   @IsString()
   @IsIn(Object.values(EventStatusFilter))
+  @TransformEmptyToUndefined()
   status?: EventStatusFilter;
 
   @IsOptional()
   @IsString()
   @IsIn(Object.values(EventTimeFilter))
+  @TransformEmptyToUndefined()
   time?: EventTimeFilter;
 }
 

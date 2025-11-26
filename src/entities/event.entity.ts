@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryColumn,
@@ -35,6 +36,7 @@ export class Events {
   id_user_creator: string;
 
   @ManyToOne(() => User, (user) => user.events)
+  @JoinColumn({ name: 'id_user_creator' })
   user_creator: User;
 
   @Column({ type: 'text' })

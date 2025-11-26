@@ -129,5 +129,24 @@
         "isStringNumeric": "Input negara tidak valid"
       }
     }
+  },
+  "event": {
+    "GetEventsDto": {
+      "page": {
+        "isNumber": "Halaman tidak valid",
+        "min": "Halaman tidak valid"
+      },
+      "limit": {
+        "isNumber": "Limit tidak valid",
+        "min": "Limit tidak valid",
+        "max": "Limit tidak valid"
+      },
+      "status": {
+        "isIn": "Status harus diisi sesuai pilihan yang tersedia"
+      },
+      "time": {
+        "isIn": "Waktu harus diisi sesuai pilihan yang tersedia"
+      }
+    }
   }
 }

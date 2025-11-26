@@ -48,17 +48,9 @@ export class EventService {
 
     // Apply status filter
     if (status) {
-      const now = new Date();
-      switch (status) {
-        case EventStatusFilter.upcoming:
-          queryBuilder.andWhere('event.start_date > :now', { now });
-          break;
-        case EventStatusFilter.ongoing:
-          queryBuilder
-            .andWhere('event.start_date <= :now', { now })
-            .andWhere('event.end_date >= :now', { now });
-          break;
-      }
+      queryBuilder.andWhere('event.status = :status', {
+        status,
+      });
     }
 
     // Apply time filter
@@ -125,13 +117,15 @@ export class EventService {
         return {
           id: event.id_event,
           name: event.name_event,
-          image: await assetStorage(event.thumbnail_url || ''),
+          image: (await assetStorage(event.thumbnail_url || '')) || null,
           price: `${minPrice}`,
           date: event.start_date.toISOString(),
           status: event.status,
           organizer: {
             name: event.user_creator?.name || '',
-            image: await assetStorage(event.user_creator?.profile_image || ''),
+            image:
+              (await assetStorage(event.user_creator?.profile_image || '')) ||
+              null,
           },
         };
       }),
