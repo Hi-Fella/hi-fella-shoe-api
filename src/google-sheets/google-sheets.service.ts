@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { google, sheets_v4 } from 'googleapis';
+import { sheets_v4, sheets } from '@googleapis/sheets';
+import { GoogleAuth } from 'google-auth-library';
 import { ConfigService } from '@nestjs/config';
 
 interface FindRowsResult {
@@ -20,12 +21,12 @@ export class GoogleSheetsService {
     );
     this.spreadsheetId = config.get<string>('GOOGLE_SHEET_USER', '');
 
-    const auth = new google.auth.GoogleAuth({
+    const auth = new GoogleAuth({
       keyFile,
       scopes: ['https://www.googleapis.com/auth/spreadsheets'],
     });
 
-    this.sheets = google.sheets({ version: 'v4', auth });
+    this.sheets = sheets({ version: 'v4', auth });
   }
 
   async getHeaders({

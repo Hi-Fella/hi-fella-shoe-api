@@ -73,11 +73,13 @@ To deploy the image from the Docker Registry:
    mkdir logs && mkdir redis_data
    ```
 
-6. Run the container:
+6. Place file `.hi-fella-google.json` inside your folder
+
+7. Run the container:
    ```bash
    docker compose up -d
    ```
-7. Last, go to your http server config, and proxy the http request into current running container's `<ip>:<port>`, you can run `docker network ls` and also `docker inspect <network id>` to check the `ip`.
+8. Last, go to your http server config, and proxy the http request into current running container's `<ip>:<port>`, you can run `docker network ls` and also `docker inspect <network id>` to check the `ip`.
 
 ## Environment Variables
 
