@@ -16,10 +16,10 @@ export class EventSubCategory {
   id_event_subcategory: string;
 
   @Column({ type: 'bigint' })
-  id_event_category: string;
+  event_category_id: string;
 
   @ManyToOne(() => EventCategory, (category) => category.subcategories)
-  @JoinColumn({ name: 'id_event_category' })
+  @JoinColumn({ name: 'event_category_id' })
   category: EventCategory;
 
   @OneToMany(() => Events, (event) => event.subcategory)

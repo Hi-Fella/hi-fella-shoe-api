@@ -15,7 +15,7 @@ export class EventTicket {
   id_ticket: string;
 
   @Column({ type: 'bigint' })
-  id_event: string;
+  event_id: string;
 
   @Column({ type: 'text' })
   name_ticket: string;
@@ -42,6 +42,6 @@ export class EventTicket {
   updated_at: Date;
 
   @ManyToOne(() => Events, (event) => event.tickets)
-  @JoinColumn({ name: 'id_event' })
+  @JoinColumn({ name: 'event_id' })
   event: Events;
 }

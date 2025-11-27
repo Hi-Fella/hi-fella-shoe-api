@@ -33,10 +33,10 @@ export class Events {
   id_event: string;
 
   @Column({ type: 'bigint' })
-  id_user_creator: string;
+  user_creator_id: string;
 
   @ManyToOne(() => User, (user) => user.events)
-  @JoinColumn({ name: 'id_user_creator' })
+  @JoinColumn({ name: 'user_creator_id' })
   user_creator: User;
 
   @Column({ type: 'text' })
@@ -46,17 +46,17 @@ export class Events {
   description: string;
 
   @Column({ type: 'bigint' })
-  id_event_category: string;
+  event_category_id: string;
 
   @ManyToOne(() => EventCategory, (category) => category.events)
-  @JoinColumn({ name: 'id_event_category' })
+  @JoinColumn({ name: 'event_category_id' })
   category: EventCategory;
 
   @Column({ type: 'bigint', nullable: true })
-  id_event_subcategory: string;
+  event_subcategory_id: string;
 
   @ManyToOne(() => EventSubCategory, (subcategory) => subcategory.events)
-  @JoinColumn({ name: 'id_event_subcategory' })
+  @JoinColumn({ name: 'event_subcategory_id' })
   subcategory: EventSubCategory;
 
   @Column({ type: 'text', nullable: true })
