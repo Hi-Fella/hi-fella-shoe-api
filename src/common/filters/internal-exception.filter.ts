@@ -10,7 +10,7 @@ import { ConfigService } from '@nestjs/config';
 
 @Catch()
 export class InternalExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(InternalExceptionFilter.name);
+  private readonly logger = new Logger('ExceptionFilter');
 
   constructor(private config: ConfigService) {}
 

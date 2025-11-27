@@ -11,7 +11,10 @@ import {
   GetEventsResponse,
   GetEventCategoriesResponse,
   GetEventSubCategoriesResponse,
+  GetEventDetailResponse,
 } from './event.dto';
+import { HttpResponseUtil } from '@/common/utils/httpresponse.util';
+import { I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class EventService {
@@ -22,6 +25,7 @@ export class EventService {
     private readonly eventCategoryRepository: Repository<EventCategory>,
     @InjectRepository(EventSubCategory, 'pg')
     private readonly eventSubCategoryRepository: Repository<EventSubCategory>,
+    private readonly i18n: I18nService,
   ) {}
 
   async getEvents(params: {
@@ -233,6 +237,57 @@ export class EventService {
       total,
       page,
       total_pages,
+    };
+  }
+
+  async getEventDetail(id_event: string): Promise<GetEventDetailResponse> {
+    const event = await this.eventRepository
+      .createQueryBuilder('event')
+      .leftJoinAndSelect('event.category', 'category')
+      .leftJoinAndSelect('event.tickets', 'tickets')
+      .leftJoinAndSelect('event.user_creator', 'user_creator')
+      .where('event.id_event = :id_event', { id_event })
+      .getOne();
+
+    if (!event) {
+      throw HttpResponseUtil.notFound({
+        message: this.i18n.t(`general.event.notFound`),
+      });
+    }
+
+    // Format tickets data
+    const formattedTickets = event.tickets.map((ticket) => ({
+      id: ticket.id_ticket,
+      name: ticket.name_ticket,
+      description: ticket.description,
+      is_available:
+        ticket.active && ticket.inventory_sold < ticket.inventory_total,
+      price: ticket.price.toString(),
+    }));
+
+    return {
+      id: event.id_event,
+      name: event.name_event,
+      image: (await assetStorage(event.thumbnail_url || '')) || null,
+      description: event.description || '',
+      status: event.status,
+      time: {
+        start: event.start_date.toISOString(),
+        end: event.end_date.toISOString(),
+        long: this.i18n.t(`general.event.duration.${event.duration}`),
+      },
+      category: {
+        id: event.category.id_event_category,
+        name: event.category.name,
+        slug: event.category.slug || '',
+      },
+      organizer: {
+        id: event.user_creator.id_user,
+        name: event.user_creator.name,
+        image:
+          (await assetStorage(event.user_creator.profile_image || '')) || null,
+      },
+      tickets: formattedTickets,
     };
   }
 }

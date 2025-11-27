@@ -150,6 +150,11 @@
       "time": {
         "isIn": "Waktu harus diisi sesuai pilihan yang tersedia"
       }
+    },
+    "GetEventDetailDto": {
+      "id_event": {
+        "isStringNumeric": "Event tidak valid"
+      }
     }
   }
 }

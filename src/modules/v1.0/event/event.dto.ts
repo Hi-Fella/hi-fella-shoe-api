@@ -1,4 +1,5 @@
 import { PaginationDto, PaginationResponse } from '@/app.dto';
+import { IsStringNumeric } from '@/common/decorators/validator/is-string-numeric.decorator';
 import { TransformEmptyToUndefined } from '@/common/decorators/validator/transform-empty-to-undefined';
 import { EventStatus } from '@/entities/event.entity';
 import { Transform } from 'class-transformer';
@@ -99,3 +100,40 @@ export class GetEventSubCategoriesDto extends PaginationDto {
 export type GetEventSubCategoriesResponse = PaginationResponse<
   EventCategoryData[]
 >;
+
+export class GetEventDetailDto {
+  @IsStringNumeric()
+  id_event: string;
+}
+
+export interface EventTicketData {
+  id: string;
+  name: string;
+  description: string;
+  is_available: boolean;
+  price: string;
+}
+
+export interface GetEventDetailResponse {
+  id: string;
+  name: string;
+  image: string | null;
+  description: string;
+  status: string;
+  time: {
+    start: string; // ISO String
+    end: string; // ISO String
+    long: string;
+  };
+  category: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+  organizer: {
+    id: string;
+    name: string;
+    image: string | null;
+  };
+  tickets: EventTicketData[];
+}

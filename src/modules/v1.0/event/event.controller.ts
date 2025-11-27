@@ -1,10 +1,11 @@
 import { HttpResponseUtil } from '@/common/utils/httpresponse.util';
-import { Controller, Get, Query, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Query, Param, UseInterceptors } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import {
   GetEventsDto,
   GetEventCategoriesDto,
   GetEventSubCategoriesDto,
+  GetEventDetailDto,
 } from './event.dto';
 import { EventService } from './event.service';
 
@@ -55,6 +56,15 @@ export class EventController {
     });
     return HttpResponseUtil.success({
       data: subCategories,
+    });
+  }
+
+  @Get('detail/:id_event')
+  @UseInterceptors(AnyFilesInterceptor())
+  async getEventDetail(@Param() params: GetEventDetailDto) {
+    const event = await this.eventService.getEventDetail(params.id_event);
+    return HttpResponseUtil.success({
+      data: event,
     });
   }
 }
