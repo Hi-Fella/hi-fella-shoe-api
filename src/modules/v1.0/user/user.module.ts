@@ -18,6 +18,15 @@ import { GoogleSheetsModule } from '@/google-sheets/google-sheets.module';
     GoogleSheetsModule,
     BullModule.registerQueue({
       name: 'user-sync-gsheet',
+      defaultJobOptions: {
+        removeOnFail: 100,
+        removeOnComplete: 100,
+        attempts: 3,
+        backoff: {
+          type: 'fixed',
+          delay: 3000,
+        },
+      },
     }),
   ],
   providers: [

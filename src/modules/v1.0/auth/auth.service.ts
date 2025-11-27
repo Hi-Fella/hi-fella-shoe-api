@@ -47,7 +47,10 @@ export class AuthService {
     });
 
     // sync to google sheet
-    await this.userService.syncUserToGoogleSheetsQueue(userWithRelations.email);
+    await this.userService.syncUserToGoogleSheetsQueue(
+      userWithRelations.id_user,
+      userWithRelations.email,
+    );
 
     // Format user data for response
     const userData: RegisterUserResponseData['user'] = {
@@ -86,6 +89,7 @@ export class AuthService {
     };
   }
 
+  @Transactional('pg')
   async registerWithoutPassword(
     dto: RegisterWithoutPasswordDto,
     ip: string,
@@ -102,7 +106,10 @@ export class AuthService {
     });
 
     // sync to google sheet
-    await this.userService.syncUserToGoogleSheetsQueue(userWithRelations.email);
+    await this.userService.syncUserToGoogleSheetsQueue(
+      userWithRelations.id_user,
+      userWithRelations.email,
+    );
 
     // Format user data for response
     const userData: RegisterUserResponseData['user'] = {
@@ -290,6 +297,7 @@ export class AuthService {
     return user;
   }
 
+  @Transactional('pg')
   async completeProfile(
     user: User,
     dto: CompleteProfileDto,
@@ -322,7 +330,10 @@ export class AuthService {
     }
 
     // sync to google sheet
-    await this.userService.syncUserToGoogleSheetsQueue(userWithRelations.email);
+    await this.userService.syncUserToGoogleSheetsQueue(
+      userWithRelations.id_user,
+      userWithRelations.email,
+    );
 
     // Format user data for response
     const userData: CompleteProfileResponseData['user'] = {
