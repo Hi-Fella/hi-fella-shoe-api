@@ -11,6 +11,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { WebsocketService } from './websocket.service';
+import { AuthService } from '@/modules/v1.0/auth/auth.service';
 
 @WebSocketGateway({
   cors: {
@@ -26,16 +27,49 @@ export class AppGateway
   @WebSocketServer() server: Server;
   private logger: Logger = new Logger('AppGateway');
 
-  constructor(private readonly websocketService: WebsocketService) {}
+  constructor(
+    private readonly websocketService: WebsocketService,
+    private readonly authService: AuthService,
+  ) {}
 
   afterInit(server: Server) {
     this.logger.log('WebSocket Gateway initialized');
     this.websocketService.setServer(server);
   }
 
-  handleConnection(client: Socket, ...args: any[]) {
+  async handleConnection(client: Socket, ...args: any[]) {
     this.logger.log(`Client connected: ${client.id}`);
-    this.websocketService.addClient(client);
+
+    // Extract token from headers
+    const token = client.handshake.headers.token as string;
+
+    if (!token) {
+      this.logger.warn(`Client ${client.id} connected without token`);
+      client.disconnect(true);
+      return;
+    }
+
+    try {
+      // Validate the token
+      const user = await this.authService.validateSocketToken(token);
+
+      if (!user) {
+        this.logger.warn(`Client ${client.id} connected with invalid token`);
+        client.disconnect(true);
+        return;
+      }
+
+      // Add client to service
+      this.websocketService.addClient(client);
+
+      // Update client with user information
+      this.websocketService.updateClientUser(client.id, user);
+
+      client.join(user.token_socket);
+    } catch (error) {
+      this.logger.error(`Error authenticating client ${client.id}:`, error);
+      client.disconnect(true);
+    }
   }
 
   handleDisconnect(client: Socket) {

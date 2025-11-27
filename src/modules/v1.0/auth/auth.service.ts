@@ -285,6 +285,11 @@ export class AuthService {
     // return this.jwtService.verifyAsync(token);
   }
 
+  async validateSocketToken(token_socket: string) {
+    const user = await this.userService.findBySocketToken(token_socket);
+    return user;
+  }
+
   async completeProfile(
     user: User,
     dto: CompleteProfileDto,

@@ -153,6 +153,15 @@ export class UserService {
     return null;
   }
 
+  async findBySocketToken(token_socket: string) {
+    const user = this.userRepository.findOne({
+      where: { token_socket },
+      relations: ['city', 'city.province', 'city.province.country'],
+    });
+
+    return user;
+  }
+
   async viewUser(id_user: string) {
     return this.userRepository.findOne({
       where: { id_user: id_user },

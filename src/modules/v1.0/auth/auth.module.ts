@@ -9,5 +9,6 @@ import { BearerTokenStrategy } from '@/common/guards/strategies/bearer-token.str
   imports: [UserModule, PassportModule],
   providers: [AuthService, BearerTokenStrategy],
   controllers: [AuthController],
+  exports: [AuthService],
 })
 export class AuthModule {}
