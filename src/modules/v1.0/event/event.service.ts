@@ -128,14 +128,14 @@ export class EventService {
         // Get the minimum ticket price
         const minPrice =
           event.tickets && event.tickets.length > 0
-            ? Math.min(...event.tickets.map((ticket) => Number(ticket.price)))
+            ? findMinimumBigInt(event.tickets.map((ticket) => ticket.price))
             : 0;
 
         return {
           id: event.id_event,
           name: event.name_event,
           image: (await assetStorage(event.thumbnail_url || '')) || null,
-          price: `${minPrice}`,
+          price: formatMoney(`${minPrice}`),
           date: event.start_date.toISOString(),
           status: event.status,
           organizer: {
@@ -262,7 +262,7 @@ export class EventService {
       description: ticket.description,
       is_available:
         ticket.active && ticket.inventory_sold < ticket.inventory_total,
-      price: ticket.price.toString(),
+      price: formatMoney(`${ticket.price}`),
     }));
 
     return {

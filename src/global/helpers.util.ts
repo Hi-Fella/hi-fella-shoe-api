@@ -47,7 +47,27 @@ export function numberToColumnLetter(num: number): string {
   return letter;
 }
 
-// Attach to globalThis so it’s available globally
+export function formatMoney(amount: number | string): string {
+  const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+
+  if (isNaN(numAmount)) {
+    return 'Rp -';
+  }
+
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(numAmount);
+}
+
+export function findMinimumBigInt(arr: bigint[]): bigint {
+  if (arr.length === 0) return BigInt(0);
+  return arr.reduce((min, current) => (current < min ? current : min));
+}
+
+// Attach to globalThis so it's available globally
 declare global {
   // extend global type
   var formatDate: (
@@ -56,8 +76,12 @@ declare global {
   ) => string;
   var capitalizeFirstLetter: (s: string) => string;
   var numberToColumnLetter: (num: number) => string;
+  var formatMoney: (amount: number | string) => string;
+  var findMinimumBigInt: (arr: bigint[]) => bigint;
 }
 
 globalThis.formatDate = formatDate;
 globalThis.capitalizeFirstLetter = capitalizeFirstLetter;
 globalThis.numberToColumnLetter = numberToColumnLetter;
+globalThis.formatMoney = formatMoney;
+globalThis.findMinimumBigInt = findMinimumBigInt;
