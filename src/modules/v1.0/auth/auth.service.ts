@@ -15,6 +15,9 @@ import {
   ValidateGoogleOAuthResponseData,
 } from './auth.dto';
 import { I18nService } from 'nestjs-i18n';
+import { Transactional } from '@/common/decorators/transactional.decorator';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -23,8 +26,11 @@ export class AuthService {
   constructor(
     private userService: UserService,
     private readonly i18n: I18nService,
+    @InjectDataSource('pg') // <--- Add this decorator
+    private readonly dataSource: DataSource,
   ) {}
 
+  @Transactional('pg')
   async register(
     dto: RegisterUserDto,
     ip: string,
@@ -40,6 +46,12 @@ export class AuthService {
       device_info: dto.device_info,
     });
 
+    // sync to google sheet
+    await this.userService.syncUserToGoogleSheetsQueue(
+      userWithRelations.id_user,
+      userWithRelations.email,
+    );
+
     // Format user data for response
     const userData: RegisterUserResponseData['user'] = {
       id: userWithRelations.id_user,
@@ -64,6 +76,8 @@ export class AuthService {
               name: userWithRelations.city.name_city,
             }
           : null,
+      profile_image: null,
+      banner_image: null,
     };
 
     return {
@@ -75,6 +89,7 @@ export class AuthService {
     };
   }
 
+  @Transactional('pg')
   async registerWithoutPassword(
     dto: RegisterWithoutPasswordDto,
     ip: string,
@@ -90,6 +105,12 @@ export class AuthService {
       device_info: dto.device_info,
     });
 
+    // sync to google sheet
+    await this.userService.syncUserToGoogleSheetsQueue(
+      userWithRelations.id_user,
+      userWithRelations.email,
+    );
+
     // Format user data for response
     const userData: RegisterUserResponseData['user'] = {
       id: userWithRelations.id_user,
@@ -114,6 +135,8 @@ export class AuthService {
               name: userWithRelations.city.name_city,
             }
           : null,
+      profile_image: await assetStorage(userWithRelations.profile_image),
+      banner_image: await assetStorage(userWithRelations.banner_image),
     };
 
     return {
@@ -194,6 +217,8 @@ export class AuthService {
                 name: user.city.name_city,
               }
             : null,
+        profile_image: await assetStorage(user.profile_image),
+        banner_image: await assetStorage(user.banner_image),
       },
     };
   }
@@ -253,6 +278,8 @@ export class AuthService {
                 name: user.city.name_city,
               }
             : null,
+        profile_image: await assetStorage(user.profile_image),
+        banner_image: await assetStorage(user.banner_image),
       },
     };
   }
@@ -265,6 +292,12 @@ export class AuthService {
     // return this.jwtService.verifyAsync(token);
   }
 
+  async validateSocketToken(token_socket: string) {
+    const user = await this.userService.findBySocketToken(token_socket);
+    return user;
+  }
+
+  @Transactional('pg')
   async completeProfile(
     user: User,
     dto: CompleteProfileDto,
@@ -272,7 +305,7 @@ export class AuthService {
     // validate registration step
     if (user.registration_step !== 1) {
       throw HttpResponseUtil.badRequest({
-        message: 'Registration had been completed previously',
+        message: 'Profil sudah dilengkapi sebelumnya',
       });
     }
 
@@ -291,8 +324,16 @@ export class AuthService {
     // Get the updated user
     const userWithRelations = await this.userService.findOneById(user.id_user);
     if (!userWithRelations) {
-      throw HttpResponseUtil.notFound({ message: 'User not found' });
+      throw HttpResponseUtil.notFound({
+        message: this.i18n.t('general.userNotFound'),
+      });
     }
+
+    // sync to google sheet
+    await this.userService.syncUserToGoogleSheetsQueue(
+      userWithRelations.id_user,
+      userWithRelations.email,
+    );
 
     // Format user data for response
     const userData: CompleteProfileResponseData['user'] = {
@@ -318,6 +359,8 @@ export class AuthService {
               name: userWithRelations.city.name_city,
             }
           : null,
+      profile_image: null,
+      banner_image: null,
     };
 
     return {
@@ -342,7 +385,9 @@ export class AuthService {
         `Google oAuth Token validation failed: ${tokenInfoResponse.statusText}`,
       );
       throw HttpResponseUtil.unauthorized({
-        message: 'Masuk dengan google gagal',
+        message: this.i18n.t(
+          'validation.auth.ValidateGoogleOAuthDto.access_token.isFailed',
+        ),
       });
     }
 
@@ -355,7 +400,9 @@ export class AuthService {
         `Google oAuth Token audience mismatch. Expected: ${clientId}, Got: ${tokenInfo.audience}`,
       );
       throw HttpResponseUtil.unauthorized({
-        message: 'Masuk dengan google gagal',
+        message: this.i18n.t(
+          'validation.auth.ValidateGoogleOAuthDto.access_token.isFailed',
+        ),
       });
     }
 
@@ -374,7 +421,9 @@ export class AuthService {
         `Google oAuth Failed to fetch user info: ${userInfoResponse.statusText}`,
       );
       throw HttpResponseUtil.unauthorized({
-        message: 'Masuk dengan google gagal',
+        message: this.i18n.t(
+          'validation.auth.ValidateGoogleOAuthDto.access_token.isFailed',
+        ),
       });
     }
 

@@ -57,3 +57,6 @@ pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 public/web
+
+# google service
+.hi-fella-google.json

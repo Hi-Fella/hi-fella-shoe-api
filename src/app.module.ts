@@ -3,6 +3,7 @@ import { DailyRotateTransport } from '@/common/transports/winston-daily-rotate.t
 import { AuthModule } from '@/modules/v1.0/auth/auth.module';
 import { UserModule } from '@/modules/v1.0/user/user.module';
 import { LocationModule } from '@/modules/v1.0/location/location.module';
+import { EventModule } from '@/modules/v1.0/event/event.module';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -24,6 +25,7 @@ import {
   HeaderResolver,
 } from 'nestjs-i18n';
 import { DtoValidationPipe } from '@/common/pipes/dto-validation.pipe';
+import { AzureBlobStorageModule } from './azure-blob-storage/azure-blob-storage.module';
 
 @Module({
   imports: [
@@ -111,6 +113,8 @@ import { DtoValidationPipe } from '@/common/pipes/dto-validation.pipe';
     AuthModule,
     UserModule,
     LocationModule,
+    EventModule,
+    AzureBlobStorageModule,
   ],
   controllers: [AppController],
   providers: [

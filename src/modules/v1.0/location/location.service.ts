@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GetCitiesResponse, GetCountriesResponse } from './location.dto';
+import { PaginationUtil } from '@/common/utils/pagination.util';
 
 @Injectable()
 export class LocationService {
@@ -19,8 +20,7 @@ export class LocationService {
     limit?: number;
     search?: string;
   }): Promise<GetCountriesResponse> {
-    const { page = 1, limit = 20, search } = params;
-    const skip = (page - 1) * limit;
+    const { search } = params;
 
     const queryBuilder = this.countryRepository
       .createQueryBuilder('country')
@@ -33,20 +33,22 @@ export class LocationService {
       });
     }
 
-    const [data, total] = await queryBuilder
-      .orderBy('country.name_country', 'ASC')
-      .skip(skip)
-      .take(limit)
-      .getManyAndCount();
+    queryBuilder.orderBy('country.name_country', 'ASC');
 
-    const formattedData: GetCountriesResponse['data'] = data.map((c) => ({
-      id: c.id_country,
-      name: c.name_country,
-      country_code: c.country_code,
-      phone_code: c.phone_code,
-      flag: c.flag,
-    }));
-    const total_pages = Math.ceil(total / limit);
+    const { data, total, page, total_pages } = await PaginationUtil.paginate(
+      queryBuilder,
+      params,
+    );
+
+    const formattedData: GetCountriesResponse['data'] = await Promise.all(
+      data.map(async (c) => ({
+        id: c.id_country,
+        name: c.name_country,
+        country_code: c.country_code,
+        phone_code: c.phone_code,
+        flag: await assetStorage(c.flag),
+      })),
+    );
 
     return {
       data: formattedData,
@@ -62,8 +64,7 @@ export class LocationService {
     search?: string;
     country_id?: string;
   }): Promise<GetCitiesResponse> {
-    const { page = 1, limit = 20, search, country_id } = params;
-    const skip = (page - 1) * limit;
+    const { search, country_id } = params;
 
     const queryBuilder = this.cityRepository
       .createQueryBuilder('city')
@@ -84,17 +85,17 @@ export class LocationService {
       });
     }
 
-    const [data, total] = await queryBuilder
-      .orderBy('city.name_city', 'ASC')
-      .skip(skip)
-      .take(limit)
-      .getManyAndCount();
+    queryBuilder.orderBy('city.name_city', 'ASC');
+
+    const { data, total, page, total_pages } = await PaginationUtil.paginate(
+      queryBuilder,
+      params,
+    );
 
     const formattedData: GetCitiesResponse['data'] = data.map((c) => ({
       id: c.id_city,
       name: c.name_city,
     }));
-    const total_pages = Math.ceil(total / limit);
 
     return {
       data: formattedData,

@@ -1,5 +1,12 @@
 {
   "userNotFound": "User tidak ditemukan",
   "cityNotFound": "Kota tidak ditemukan",
-  "phoneCodeNotFound": "Kode telepon tidak ditemukan"
+  "phoneCodeNotFound": "Kode telepon tidak ditemukan",
+  "event": {
+    "duration": {
+      "2h": "2 Jam",
+      "1h": "1 Jam"
+    },
+    "notFound": "Event tidak ditemukan"
+  }
 }

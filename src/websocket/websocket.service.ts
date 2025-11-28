@@ -1,11 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
+import { User } from '@/entities/user.entity';
 
 export interface ClientInfo {
   id: string;
   socket: Socket;
   connectedAt: Date;
   rooms: string[];
+  user?: User;
 }
 
 @Injectable()
@@ -41,11 +43,24 @@ export class WebsocketService {
     }
   }
 
+  // Method to update client user information after authentication
+  updateClientUser(clientId: string, user: User): void {
+    const client = this.clients.get(clientId);
+    if (client) {
+      client.user = user;
+      this.logger.log(
+        `Client ${clientId} connected and authenticated as user ${user.email}`,
+      );
+    }
+  }
+
   removeClient(clientId: string): void {
+    const client = this.clients.get(clientId);
+    const userEmail = client?.user?.email;
     const removed = this.clients.delete(clientId);
     if (removed) {
       this.logger.log(
-        `Client removed: ${clientId}. Total clients: ${this.clients.size}`,
+        `Client removed: ${clientId} ${!!userEmail ? `(${userEmail})` : ''}, Total clients: ${this.clients.size}`,
       );
     }
   }

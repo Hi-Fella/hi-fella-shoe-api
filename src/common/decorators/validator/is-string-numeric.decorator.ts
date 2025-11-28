@@ -5,18 +5,35 @@ import {
   registerDecorator,
 } from 'class-validator';
 
+function isValidBigInt(value: string): boolean {
+  if (!/^-?\d+$/.test(value)) return false; // Check it's a valid number string
+
+  try {
+    const num = BigInt(value);
+    return num >= -9223372036854775808n && num <= 9223372036854775807n;
+  } catch {
+    return false;
+  }
+}
+
 // Custom validator for string numeric validation
 @ValidatorConstraint({ name: 'isStringNumeric', async: false })
 export class IsStringNumericConstraint implements ValidatorConstraintInterface {
   validate(value: string) {
     if (typeof value !== 'string') return false;
 
-    // Allow empty string or check if string contains only numeric characters
-    return value === '' || /^\d+$/.test(value);
+    // Allow empty string
+    if (value === '') return true;
+
+    // Check if string contains only numeric characters
+    if (!/^\d+$/.test(value)) return false;
+
+    // Check if the length exceeds BigInt maximum safe length
+    return isValidBigInt(value);
   }
 
   defaultMessage(args: ValidationArguments) {
-    return `${args.property} must contain only numeric characters`;
+    return `${args.property} must contain only numeric characters and not exceed 1000 characters`;
   }
 }
 

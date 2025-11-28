@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { City } from './city.entity';
 import { UserLoginHistory } from './user-login-history.entity';
+import { Events } from './event.entity';
 
 @Entity('hf_users')
 export class User {
@@ -117,4 +118,7 @@ export class User {
 
   @OneToMany(() => UserLoginHistory, (loginHistory) => loginHistory.user)
   loginHistories: UserLoginHistory[];
+
+  @OneToMany(() => Events, (event) => event.user_creator)
+  events: Events[];
 }

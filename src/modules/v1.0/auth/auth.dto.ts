@@ -4,7 +4,6 @@ import { IsPhoneNumberValid } from '@/common/decorators/validator/is-phone-numbe
 import { Match } from '@/common/decorators/validator/match.dto';
 import { UserData } from '@/modules/v1.0/user/user.dto';
 import {
-  IsAlpha,
   IsEmail,
   IsIn,
   IsNotEmpty,
@@ -120,7 +119,7 @@ export class CompleteProfileDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(300)
-  @IsAlpha()
+  @Matches(/^[a-zA-Z\s]+$/)
   fullname: string;
 
   @IsString()
